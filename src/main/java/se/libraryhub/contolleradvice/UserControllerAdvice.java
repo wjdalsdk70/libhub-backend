@@ -13,7 +13,6 @@ public class UserControllerAdvice {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseBody
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException notFoundException){
-        return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(notFoundException.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
 }

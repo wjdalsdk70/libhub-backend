@@ -16,6 +16,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User registerUser(String username, String email, String profileImageUrl) {
+        if(isExistingEmail(email)){
+            throw new UserNotFoundException();
+        }
         return userRepository.save(new User(username, email, profileImageUrl));
     }
 
