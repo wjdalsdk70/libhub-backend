@@ -9,6 +9,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import se.libraryhub.config.oauth.PrincipalDetails;
+import static se.libraryhub.config.oauth.SecurityUtil.getCurrentUser;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.UserRequestDto;
 import se.libraryhub.user.domain.dto.UserResponseDto;
@@ -24,22 +25,22 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/home")
-    public String goHome(){
-        return "This is main page";
+    public User goHome(){
+        return getCurrentUser();
     }
 
     @PostMapping("/update")
-    public UserResponseDto updateUser(@RequestBody UserRequestDto userRequestDto, @AuthenticationPrincipal PrincipalDetails principalDetails){
-        User user = getUserByPrincipal(principalDetails);
-        return UserResponseDto.ofUserEntity(
+    public UserResponseDto updateUser(@RequestBody UserRequestDto userRequestDto){
+        User user = getCurrentUser();
+        return UserResponseDto.of(
                 userService.updateUser(user.getId(), userRequestDto.getUsername(), userRequestDto.getProfileImageUrl())
         );
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal PrincipalDetails principalDetails){
+    public ResponseEntity<?> deleteUser(){
         try{
-            User user = getUserByPrincipal(principalDetails);
+            User user = getCurrentUser();
             userService.deleteUser(user.getId());
             return new ResponseEntity<>(HttpStatus.OK);
         }catch(Exception e){
@@ -48,8 +49,8 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public UserResponseDto getUserProfile(@AuthenticationPrincipal PrincipalDetails principalDetails){
-        return UserResponseDto.ofUserEntity(getUserByPrincipal(principalDetails));
+    public UserResponseDto getUserProfile(){
+        return UserResponseDto.of(getCurrentUser());
     }
 
     @GetMapping("/profileImg/{userId}")
@@ -57,7 +58,4 @@ public class UserController {
         return userService.getProfileImg(userId);
     }
 
-    public User getUserByPrincipal(PrincipalDetails principalDetails){
-        return userService.findUserByEmail(principalDetails.getUser().getEmail());
-    }
 }

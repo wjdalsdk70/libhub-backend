@@ -7,7 +7,7 @@ import se.libraryhub.project.domain.Project;
 public class ProjectServiceImpl implements ProjectService{
 
     @Override
-    public Project findProjectByProjectId(Long Project) {
+    public Project findProjectById(Long projectId) {
         return null;
     }
 }

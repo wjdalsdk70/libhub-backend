@@ -18,7 +18,7 @@ public class HashtagService {
     private final LibraryService libraryService;
 
     public List<Hashtag> getProjectHashtags(Long projectId) {
-        Project findProject = projectService.findProjectByProjectId(projectId);
+        Project findProject = projectService.findProjectById(projectId);
         return hashtagRepository.findAllByProject(findProject);
     }
 

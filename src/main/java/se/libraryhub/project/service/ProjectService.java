@@ -5,5 +5,5 @@ import se.libraryhub.project.domain.Project;
 
 public interface ProjectService {
 
-    Project findProjectByProjectId(Long Project);
+    Project findProjectById(Long Project);
 }
