@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static se.libraryhub.config.oauth.SecurityUtil.getAccessToken;
 import static se.libraryhub.config.oauth.SecurityUtil.getCurrentUser;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.request.UserRequestDto;
@@ -22,8 +21,12 @@ public class UserController {
 
     @GetMapping("/info")
     public User goHome(){
-        System.out.println(getAccessToken());
         return getCurrentUser();
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<?> login(){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/update")

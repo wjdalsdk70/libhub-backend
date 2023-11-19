@@ -14,6 +14,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.DisableEncodeUrlFilter;
 import se.libraryhub.config.filter.FakeAuthenticationFilter;
+import se.libraryhub.config.filter.CustomAuthFailureHandler;
+import se.libraryhub.config.filter.FakeAuthenticationFilter;
 import se.libraryhub.config.oauth.CustomOAuth2UserService;
 import se.libraryhub.config.oauth.PrincipalDetails;
 import se.libraryhub.user.domain.Role;
@@ -30,7 +32,8 @@ import java.io.IOException;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService oauthUserService;
-//    private final UserService userService;
+    private final CustomAuthFailureHandler customAuthFailureHandler;
+    private final UserService userService;
 
 //    @Bean
 //    public FakeAuthenticationFilter fakeAuthenticationFilter(){
@@ -50,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
             // all
-            "/**",
+//            "/**",
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
@@ -77,11 +80,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .cors(Customizer.withDefaults())
-                .formLogin().disable();
+                .formLogin().loginPage("http://localhost:3000/auth");
         http
                 .oauth2Login()
                 .userInfoEndpoint()
-                .userService(oauthUserService);
+                .userService(oauthUserService)
+                .and()
+                .failureHandler(customAuthFailureHandler);
 
 //                .and()
 //                .successHandler(new AuthenticationSuccessHandler() {

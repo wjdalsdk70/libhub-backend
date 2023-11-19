@@ -13,9 +13,9 @@ public class FilterConfig {
 
     private final UserService userService;
 
-    @Bean
-    public FilterRegistrationBean<FakeAuthenticationFilter> filter(){
-        FilterRegistrationBean<FakeAuthenticationFilter> bean = new FilterRegistrationBean<>(new FakeAuthenticationFilter(userService));
-        return bean;
-    }
+//    @Bean
+//    public FilterRegistrationBean<FakeAuthenticationFilter> filter(){
+//        FilterRegistrationBean<FakeAuthenticationFilter> bean = new FilterRegistrationBean<>(new FakeAuthenticationFilter(userService));
+//        return bean;
+//    }
 }

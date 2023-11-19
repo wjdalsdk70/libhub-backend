@@ -22,14 +22,4 @@ public class SecurityUtil {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         return principalDetails.getUser();
     }
-
-    public static String getAccessToken(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication == null){
-            throw new IllegalStateException("Cannot find the current user. Please check the security settings.");
-        }
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        return principalDetails.getAttribute("access_token");
-    }
 }
