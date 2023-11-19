@@ -3,10 +3,12 @@ package se.libraryhub.library.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import se.libraryhub.library.domain.Library;
+import se.libraryhub.library.domain.dto.request.LibraryHashtagRequestDto;
 import se.libraryhub.library.domain.dto.request.LibraryRequestDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.library.domain.dto.response.LibraryResponseDto;
 import se.libraryhub.library.service.LibraryService;
+import se.libraryhub.project.domain.dto.ProjectHashtagRequestDto;
 
 import java.util.List;
 
@@ -23,7 +25,12 @@ public class LibraryController {
     }
 
     @PostMapping
-    public LibraryResponseDto addLibrary(LibraryRequestDto libraryRequestDto){
+    public LibraryResponseDto addLibrary(@RequestBody LibraryRequestDto libraryRequestDto){
         return libraryService.addLibrary(libraryRequestDto);
+    }
+
+    @PostMapping("/hashtag")
+    public void addHashtag(@RequestBody LibraryHashtagRequestDto libraryHashtagRequestDto){
+        libraryService.addHashtag(libraryHashtagRequestDto);
     }
 }

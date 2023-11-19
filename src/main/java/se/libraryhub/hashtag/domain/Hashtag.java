@@ -31,16 +31,25 @@ public class Hashtag {
     private String content;
 
     @Builder
-    public Hashtag(Project project, String content){
+    public Hashtag(Project project, Library library, String content) {
         this.project = project;
-        this.content = content;
-        this.library = null;
-    }
-
-    @Builder
-    public Hashtag(Library library, String content){
         this.library = library;
         this.content = content;
-        this.project = null;
+    }
+
+    public static Hashtag projectHashtag(Project project, String content){
+        return Hashtag.builder()
+                .project(project)
+                .content(content)
+                .library(null)
+                .build();
+    }
+
+    public static Hashtag libraryHashtag(Library library, String content){
+        return Hashtag.builder()
+                .project(null)
+                .content(content)
+                .library(library)
+                .build();
     }
 }

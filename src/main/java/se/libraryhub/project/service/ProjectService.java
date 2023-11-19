@@ -42,10 +42,7 @@ public class ProjectService{
 
         Project project = projectRepository.findProjectByProjectId(projectHashtagRequestDto.getProjectId())
                 .orElseThrow(ProjectNotFoundException::new);
-        Hashtag hashtag = Hashtag.builder()
-                .project(project)
-                .content(projectHashtagRequestDto.getContent())
-                .build();
+        Hashtag hashtag = Hashtag.projectHashtag(project, projectHashtagRequestDto.getContent());
         hashtagRepository.save(hashtag);
     }
 }
