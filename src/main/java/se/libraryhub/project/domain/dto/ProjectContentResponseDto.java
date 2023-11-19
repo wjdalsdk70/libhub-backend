@@ -1,11 +1,9 @@
 package se.libraryhub.project.domain.dto;
 
 import lombok.*;
-import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.project.domain.Project;
-import se.libraryhub.user.domain.User;
-import se.libraryhub.user.domain.dto.UserResponseDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,13 +20,21 @@ public class ProjectContentResponseDto {
 
     private List<String> projectHashtags;
 
+    private LocalDateTime createdDate;
+
+    private LocalDateTime modifiedDate;
+
     @Builder
-    public ProjectContentResponseDto(Long projectId, String projectname, String projectLink, Boolean isPublic, List<String> projectHashtags) {
+    public ProjectContentResponseDto(Long projectId, String projectname, String projectLink,
+                                     Boolean isPublic, List<String> projectHashtags
+                                     ,LocalDateTime createdDate , LocalDateTime modifiedDate) {
         this.projectId = projectId;
         this.projectname = projectname;
         this.projectLink = projectLink;
         this.projectHashtags = projectHashtags;
         this.isPublic = isPublic;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
     }
 
     public static ProjectContentResponseDto of(Project project, List<String> hashtags){
@@ -36,6 +42,8 @@ public class ProjectContentResponseDto {
                 .projectId(project.getProjectId())
                 .projectname(project.getProjectname())
                 .projectLink(project.getProjectLink())
+                .createdDate(project.getCreateDate())
+                .modifiedDate(project.getModifiedDate())
                 .projectHashtags(hashtags)
                 .isPublic(project.getIsPublic())
                 .build();

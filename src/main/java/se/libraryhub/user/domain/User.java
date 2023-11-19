@@ -36,16 +36,6 @@ public class User extends BaseTimeEntity {
     public User() {
     }
 
-    public User makeUser(Long id, String username, String email, String profileImageUrl){
-        User user = User.builder()
-                .username(username)
-                .email(email)
-                .profileImageUrl(profileImageUrl)
-                .build();
-        user.setId((id));
-        return user;
-    }
-
     public void updateUser(String username, String profileImageUrl){
         this.username = username;
         this.profileImageUrl = profileImageUrl;

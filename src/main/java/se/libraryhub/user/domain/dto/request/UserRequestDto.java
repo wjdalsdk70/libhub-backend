@@ -1,18 +1,17 @@
-package se.libraryhub.user.domain.dto;
+package se.libraryhub.user.domain.dto.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import se.libraryhub.user.domain.Role;
+import lombok.*;
 import se.libraryhub.user.domain.User;
 
-@Getter
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRequestDto {
 
-    private final String username;
+    private String username;
 
-    private final String email;
+    private String email;
 
-    private final String profileImageUrl;
+    private String profileImageUrl;
 
     @Builder
     public UserRequestDto(String username, String email, String profileImageUrl) {

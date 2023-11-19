@@ -25,6 +25,7 @@ public class UserService{
     public User updateUser(Long userId, String username, String profileImageUrl) {
         User user = findUserById(userId);
         user.updateUser(username, profileImageUrl);
+        userRepository.save(user);
         return user;
     }
 

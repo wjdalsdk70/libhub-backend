@@ -3,7 +3,6 @@ package se.libraryhub.project.domain.dto;
 import lombok.*;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.user.domain.User;
-import se.libraryhub.user.domain.dto.UserRequestDto;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

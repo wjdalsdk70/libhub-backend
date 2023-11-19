@@ -1,7 +1,6 @@
 package se.libraryhub.user.domain.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,22 +12,23 @@ import javax.persistence.Enumerated;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
-@Getter
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserResponseDto {
 
-    private final Long id;
+    private Long id;
 
-    private final String username;
+    private String username;
 
-    private final String email;
+    private String email;
 
-    private final String profileImageUrl;
+    private String profileImageUrl;
 
-    private final Role role;
+    private Role role;
 
-    private final LocalDateTime createDate;
+    private LocalDateTime createDate;
 
-    private final LocalDateTime modifiedDate;
+    private LocalDateTime modifiedDate;
 
     @Builder
     public UserResponseDto(Long id, String username, String email, String profileImageUrl, Role role, LocalDateTime createDate, LocalDateTime modifiedDate) {

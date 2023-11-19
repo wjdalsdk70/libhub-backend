@@ -19,10 +19,6 @@ public class ProjectService{
     private final ProjectRepository projectRepository;
     private final HashtagRepository hashtagRepository;
 
-    public Project findProjectById(Long projectId) {
-        return projectRepository.findProjectByProjectId(projectId).orElseThrow();
-    }
-
     public ProjectResponseDto postProject(ProjectRequestDto projectRequestDto, User user) {
         Project project = projectRequestDto.toEntity(projectRequestDto, user);
         Project postedProject = projectRepository.save(project);

@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import static se.libraryhub.config.oauth.SecurityUtil.getAccessToken;
 import static se.libraryhub.config.oauth.SecurityUtil.getCurrentUser;
 import se.libraryhub.user.domain.User;
-import se.libraryhub.user.domain.dto.UserRequestDto;
+import se.libraryhub.user.domain.dto.request.UserRequestDto;
 import se.libraryhub.user.domain.dto.UserResponseDto;
+import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
 import se.libraryhub.user.service.UserService;
 
 @RestController
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public UserResponseDto updateUser(@RequestBody UserRequestDto userRequestDto){
+    public UserResponseDto updateUser(@RequestBody UserUpdateRequestDto userRequestDto){
         User user = getCurrentUser();
         return UserResponseDto.of(
                 userService.updateUser(user.getId(), userRequestDto.getUsername(), userRequestDto.getProfileImageUrl())
