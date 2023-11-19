@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long projectId;
@@ -21,7 +22,6 @@ public class Project extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
 
     @Column(nullable = false)
     private String projectname;

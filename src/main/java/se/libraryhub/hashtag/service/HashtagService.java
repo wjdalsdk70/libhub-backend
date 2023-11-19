@@ -1,7 +1,9 @@
-package se.libraryhub.hashtag;
+package se.libraryhub.hashtag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.libraryhub.hashtag.domain.Hashtag;
+import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.Library;
 import se.libraryhub.library.service.LibraryService;
 import se.libraryhub.project.domain.Project;

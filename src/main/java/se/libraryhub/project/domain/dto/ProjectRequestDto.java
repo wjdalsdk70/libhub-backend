@@ -1,18 +1,19 @@
 package se.libraryhub.project.domain.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import se.libraryhub.project.domain.Project;
+import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.UserRequestDto;
 
-@Getter
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProjectRequestDto {
 
-    private final String projectname;
+    private String projectname;
 
-    private final String projectLink;
+    private String projectLink;
 
-    private final Boolean isPublic;
+    private Boolean isPublic;
 
     @Builder
     public ProjectRequestDto(String projectname, String projectLink, Boolean isPublic) {
@@ -21,11 +22,12 @@ public class ProjectRequestDto {
         this.isPublic = isPublic;
     }
 
-    public Project toEntity(ProjectRequestDto projectRequestDto){
+    public Project toEntity(ProjectRequestDto projectRequestDto, User user){
         return Project.builder()
                 .isPublic(projectRequestDto.getIsPublic())
                 .projectLink(projectRequestDto.getProjectLink())
                 .projectname(projectRequestDto.getProjectname())
+                .user(user)
                 .build();
     }
 }

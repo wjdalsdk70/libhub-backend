@@ -1,9 +1,6 @@
 package se.libraryhub.user.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import se.libraryhub.global.util.BaseTimeEntity;
@@ -13,8 +10,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class User extends BaseTimeEntity {
 
     @Id
@@ -38,6 +34,16 @@ public class User extends BaseTimeEntity {
     }
 
     public User() {
+    }
+
+    public User makeUser(Long id, String username, String email, String profileImageUrl){
+        User user = User.builder()
+                .username(username)
+                .email(email)
+                .profileImageUrl(profileImageUrl)
+                .build();
+        user.setId((id));
+        return user;
     }
 
     public void updateUser(String username, String profileImageUrl){

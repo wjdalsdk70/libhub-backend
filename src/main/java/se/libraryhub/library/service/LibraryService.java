@@ -1,8 +1,12 @@
 package se.libraryhub.library.service;
 
+import org.springframework.stereotype.Service;
 import se.libraryhub.library.domain.Library;
 
-public interface LibraryService {
+@Service
+public class LibraryService{
 
-    Library findLibraryByLibraryId(Long libraryId);
+    public Library findLibraryByLibraryId(Long libraryId) {
+        return null;
+    }
 }

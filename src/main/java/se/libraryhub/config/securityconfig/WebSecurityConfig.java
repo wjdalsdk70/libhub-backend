@@ -1,17 +1,23 @@
 package se.libraryhub.config.securityconfig;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.DisableEncodeUrlFilter;
+import se.libraryhub.config.filter.FakeAuthenticationFilter;
 import se.libraryhub.config.oauth.CustomOAuth2UserService;
 import se.libraryhub.config.oauth.PrincipalDetails;
 import se.libraryhub.user.domain.Role;
+import se.libraryhub.user.service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,20 +30,27 @@ import java.io.IOException;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService oauthUserService;
+//    private final UserService userService;
 
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        web
-//                .ignoring()
-//                .antMatchers("/resources/**","/configuration/ui",
-//                        "/swagger-resources/**",
-//                        "/configuration/security",
-//                        "/swagger-ui.html",
-//                        "/swagger-ui/**",
-//                        "/webjars/**");
+//    @Bean
+//    public FakeAuthenticationFilter fakeAuthenticationFilter(){
+//        return new FakeAuthenticationFilter(userService);
 //    }
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers(AUTH_WHITELIST);
+    }
+
+    private final String[] SWAGGER = {
+            "/v3/api-docs",
+            "/swagger-resources/**", "/configuration/security", "/webjars/**",
+            "/swagger-ui.html", "/swagger/**", "/swagger-ui/**"
+    };
+
     private static final String[] AUTH_WHITELIST = {
+            // all
+            "/**",
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
@@ -68,14 +81,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .oauth2Login()
                 .userInfoEndpoint()
-                .userService(oauthUserService)
-                .and()
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        response.sendRedirect("/api/user/home");
-                    }
-                });
+                .userService(oauthUserService);
+
+//                .and()
+//                .successHandler(new AuthenticationSuccessHandler() {
+//                    @Override
+//                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//                        System.out.println(request.toString());
+//                    }
+//                });
     }
 
 

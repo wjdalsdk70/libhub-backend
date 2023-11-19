@@ -1,24 +1,18 @@
 package se.libraryhub.project.domain.dto;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.UserResponseDto;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectResponseDto {
+public class ProjectContentResponseDto {
 
     private Long projectId;
-
-    private UserResponseDto userResponseDto;
 
     private String projectname;
 
@@ -26,21 +20,23 @@ public class ProjectResponseDto {
 
     private Boolean isPublic;
 
+    private List<String> projectHashtags;
+
     @Builder
-    public ProjectResponseDto(Long projectId, UserResponseDto userResponseDto, String projectname, String projectLink, Boolean isPublic) {
+    public ProjectContentResponseDto(Long projectId, String projectname, String projectLink, Boolean isPublic, List<String> projectHashtags) {
         this.projectId = projectId;
-        this.userResponseDto = userResponseDto;
         this.projectname = projectname;
         this.projectLink = projectLink;
+        this.projectHashtags = projectHashtags;
         this.isPublic = isPublic;
     }
 
-    public static ProjectResponseDto of(Project project, User user){
-        return ProjectResponseDto.builder()
+    public static ProjectContentResponseDto of(Project project, List<String> hashtags){
+        return ProjectContentResponseDto.builder()
                 .projectId(project.getProjectId())
-                .userResponseDto(UserResponseDto.of(user))
                 .projectname(project.getProjectname())
                 .projectLink(project.getProjectLink())
+                .projectHashtags(hashtags)
                 .isPublic(project.getIsPublic())
                 .build();
     }

@@ -1,29 +1,63 @@
 package se.libraryhub.user.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.libraryhub.config.oauth.SecurityUtil;
+import se.libraryhub.global.error.UserNotFoundException;
 import se.libraryhub.user.domain.User;
+import se.libraryhub.user.repository.UserRepository;
 
 import java.util.List;
 
-public interface UserService {
+@Service
+@RequiredArgsConstructor
+public class UserService{
 
-    User registerUser(String username, String email, String profileImageUrl);
+    private final UserRepository userRepository;
 
-    User updateUser(Long userId, String username, String profileImageUrl);
+    public User registerUser(String username, String email, String profileImageUrl) {
+        if(isExistingEmail(email)){
+            throw new UserNotFoundException();
+        }
+        return userRepository.save(new User(username, email, profileImageUrl));
+    }
 
-    User findUserByEmail(String email);
+    public User updateUser(Long userId, String username, String profileImageUrl) {
+        User user = findUserById(userId);
+        user.updateUser(username, profileImageUrl);
+        return user;
+    }
 
-    User findUserById(Long userId);
+    public User findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email).orElseThrow(UserNotFoundException::new);
+    }
 
-    boolean deleteUser(Long userId);
+    public User findUserById(Long userId){
+        return userRepository.findUserById(userId).orElseThrow((UserNotFoundException::new));
+    }
 
-    User getUserProfile(Long userId);
+    public void deleteUser() {
+        userRepository.delete(SecurityUtil.getCurrentUser());
+    }
 
-    String getProfileImg(Long userId);
+    public User getUserProfile(Long userId) {
+        return userRepository.findUserById(userId).orElseThrow(UserNotFoundException::new);
+    }
 
-    boolean isExistingEmail(String email);
-    
-    boolean logoutUser(Long userId);
+    public String getProfileImg(Long userId) {
+        User user = findUserById(userId);
+        return user.getProfileImageUrl();
+    }
 
-    List<User> searchUserByUsername(String username);
+    public boolean isExistingEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public boolean logoutUser(Long userId) {
+        return false;
+    }
+
+    public List<User> searchUserByUsername(String username) {
+        return userRepository.searchAllByUsername(username);
+    }
 }
