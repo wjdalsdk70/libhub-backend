@@ -44,4 +44,9 @@ public class ProjectController {
     public Page<Project> pagingProject(@PathVariable int pageNumber, Pageable pageable){
         return projectService.pagingProjects(pageNumber);
     }
+
+    @GetMapping("/mypage/{pageNumber}")
+    public Page<Project> pagingMyProject(@PathVariable int pageNumber, Pageable pageable){
+        return projectService.pagingMyProjects(getCurrentUser(), pageNumber);
+    }
 }

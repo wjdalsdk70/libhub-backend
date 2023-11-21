@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import se.libraryhub.global.error.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
@@ -49,10 +50,13 @@ public class ProjectService{
         hashtagRepository.save(hashtag);
     }
 
-    public Page<Project> pagingProjects(int pageNum){
-        Pageable pageable = PageRequest.of(pageNum, 10);
-        System.out.println("Pageable");
-        System.out.println(pageable);
+    public Page<Project> pagingProjects(int pageNumber){
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by("createDate").descending());
         return projectRepository.findAll(pageable);
+    }
+
+    public Page<Project> pagingMyProjects(User user, int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by("createDate").descending());
+        return projectRepository.findByUser(user, pageable);
     }
 }

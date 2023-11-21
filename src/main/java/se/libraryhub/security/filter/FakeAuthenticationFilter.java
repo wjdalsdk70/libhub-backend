@@ -24,7 +24,7 @@ public class FakeAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        PrincipalDetails principalDetails = new PrincipalDetails(userService.getUserProfile((long) 1), new HashMap<>());
+        PrincipalDetails principalDetails = new PrincipalDetails(userService.getUserProfile((long) 2), new HashMap<>());
         Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, principalDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
