@@ -1,15 +1,8 @@
-package se.libraryhub.config.oauth;
+package se.libraryhub.security.oauth;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import se.libraryhub.user.domain.User;
-import se.libraryhub.user.repository.UserRepository;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 public class SecurityUtil {
 

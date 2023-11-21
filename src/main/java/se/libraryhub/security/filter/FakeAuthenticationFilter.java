@@ -1,11 +1,10 @@
-package se.libraryhub.config.filter;
+package se.libraryhub.security.filter;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import se.libraryhub.config.oauth.PrincipalDetails;
+import se.libraryhub.security.oauth.PrincipalDetails;
 import se.libraryhub.user.service.UserService;
 
 import javax.servlet.FilterChain;
@@ -25,7 +24,6 @@ public class FakeAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("FILLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLTER");
         PrincipalDetails principalDetails = new PrincipalDetails(userService.getUserProfile((long) 1), new HashMap<>());
         Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, principalDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);

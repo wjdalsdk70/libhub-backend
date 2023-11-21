@@ -1,7 +1,4 @@
-package se.libraryhub.config.oauth;
-
-import se.libraryhub.user.domain.Role;
-import se.libraryhub.user.domain.User;
+package se.libraryhub.security.oauth;
 
 import java.util.Map;
 

@@ -1,10 +1,7 @@
-package se.libraryhub.config.securityconfig;
+package se.libraryhub.security.securityconfig;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import se.libraryhub.config.filter.FakeAuthenticationFilter;
 import se.libraryhub.user.service.UserService;
 
 @Configuration

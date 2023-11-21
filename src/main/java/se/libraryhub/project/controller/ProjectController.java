@@ -1,17 +1,17 @@
 package se.libraryhub.project.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
+import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.domain.dto.*;
 import se.libraryhub.project.service.ProjectService;
-import se.libraryhub.user.domain.User;
 
-import java.util.List;
-
-import static se.libraryhub.config.oauth.SecurityUtil.getCurrentUser;
+import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,5 +38,10 @@ public class ProjectController {
     @PostMapping("/hashtag")
     public void addHashtag(@RequestBody ProjectHashtagRequestDto projectHashtagRequestDto){
         projectService.addHashtag(projectHashtagRequestDto);
+    }
+
+    @GetMapping("/page/{pageNumber}")
+    public Page<Project> pagingProject(@PathVariable int pageNumber, Pageable pageable){
+        return projectService.pagingProjects(pageNumber);
     }
 }

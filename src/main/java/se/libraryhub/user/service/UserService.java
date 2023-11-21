@@ -2,7 +2,7 @@ package se.libraryhub.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.libraryhub.config.oauth.SecurityUtil;
+import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.global.error.UserNotFoundException;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.repository.UserRepository;

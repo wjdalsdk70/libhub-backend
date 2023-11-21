@@ -1,30 +1,18 @@
-package se.libraryhub.config.securityconfig;
+package se.libraryhub.security.securityconfig;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.DisableEncodeUrlFilter;
-import se.libraryhub.config.filter.FakeAuthenticationFilter;
-import se.libraryhub.config.filter.CustomAuthFailureHandler;
-import se.libraryhub.config.filter.FakeAuthenticationFilter;
-import se.libraryhub.config.oauth.CustomOAuth2UserService;
-import se.libraryhub.config.oauth.PrincipalDetails;
+import se.libraryhub.security.filter.CustomAuthFailureHandler;
+import se.libraryhub.security.filter.FakeAuthenticationFilter;
+import se.libraryhub.security.oauth.CustomOAuth2UserService;
 import se.libraryhub.user.domain.Role;
 import se.libraryhub.user.service.UserService;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -35,10 +23,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomAuthFailureHandler customAuthFailureHandler;
     private final UserService userService;
 
-//    @Bean
-//    public FakeAuthenticationFilter fakeAuthenticationFilter(){
-//        return new FakeAuthenticationFilter(userService);
-//    }
+    @Bean
+    public FakeAuthenticationFilter fakeAuthenticationFilter(){
+        return new FakeAuthenticationFilter(userService);
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -53,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
             // all
-//            "/**",
+            "/**",
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
@@ -64,8 +52,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             // -- Swagger UI v3 (OpenAPI)
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
             // other public endpoints of your API may be appended to this array
+            "/api/project/**",
+            "/api/library/**"
     };
 
     @Override
@@ -73,28 +63,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/api/user/login")
-                .permitAll()
                 .antMatchers("/api/user/**")
                 .hasAnyRole(Role.USER.name(),Role.GUEST.name(),Role.ADMIN.name())
-                .anyRequest().authenticated()
-                .and()
+                .anyRequest().authenticated().and()
                 .cors(Customizer.withDefaults())
                 .formLogin().loginPage("http://localhost:3000/auth");
         http
                 .oauth2Login()
                 .userInfoEndpoint()
-                .userService(oauthUserService)
-                .and()
+                .userService(oauthUserService).and()
                 .failureHandler(customAuthFailureHandler);
-
-//                .and()
-//                .successHandler(new AuthenticationSuccessHandler() {
-//                    @Override
-//                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//                        System.out.println(request.toString());
-//                    }
-//                });
     }
 
 

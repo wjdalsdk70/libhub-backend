@@ -5,9 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static se.libraryhub.config.oauth.SecurityUtil.getCurrentUser;
+import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 import se.libraryhub.user.domain.User;
-import se.libraryhub.user.domain.dto.request.UserRequestDto;
 import se.libraryhub.user.domain.dto.UserResponseDto;
 import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
 import se.libraryhub.user.service.UserService;

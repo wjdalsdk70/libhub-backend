@@ -1,4 +1,4 @@
-package se.libraryhub.config.oauth;
+package se.libraryhub.security.oauth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

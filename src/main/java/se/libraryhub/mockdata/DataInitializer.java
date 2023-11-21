@@ -3,22 +3,13 @@ package se.libraryhub.mockdata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import se.libraryhub.config.oauth.PrincipalDetails;
 import se.libraryhub.project.domain.Project;
-import se.libraryhub.project.domain.dto.ProjectRequestDto;
-import se.libraryhub.project.domain.dto.ProjectResponseDto;
 import se.libraryhub.project.repository.ProjectRepository;
-import se.libraryhub.project.service.ProjectService;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.repository.UserRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -32,8 +23,8 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        initUser();
-        initProject();
+//        initUser();
+//        initProject();
     }
 
     public void initUser(){
@@ -80,5 +71,15 @@ public class DataInitializer implements ApplicationRunner {
         projects.add(projectRepository.save(project1));
         projects.add(projectRepository.save(project2));
         projects.add(projectRepository.save(project3));
+
+        for(int i = 0; i < 20; i++){
+            Project project = Project.builder()
+                    .projectLink("purl"+i)
+                    .projectname("proname"+i)
+                    .isPublic(true)
+                    .user(users.get(1))
+                    .build();
+            projects.add(projectRepository.save(project));
+        }
     }
 }

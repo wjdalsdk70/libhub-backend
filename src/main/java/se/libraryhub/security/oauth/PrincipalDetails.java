@@ -1,4 +1,4 @@
-package se.libraryhub.config.oauth;
+package se.libraryhub.security.oauth;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
