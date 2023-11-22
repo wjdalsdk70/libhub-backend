@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import se.libraryhub.global.error.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
+import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
+import se.libraryhub.library.repository.LibraryRepository;
+import se.libraryhub.library.service.LibraryService;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.domain.dto.*;
 import se.libraryhub.project.repository.ProjectRepository;
@@ -22,6 +25,8 @@ public class ProjectService{
 
     private final ProjectRepository projectRepository;
     private final HashtagRepository hashtagRepository;
+    private final LibraryRepository libraryRepository;
+    private final LibraryService libraryService;
 
     public ProjectResponseDto postProject(ProjectRequestDto projectRequestDto, User user) {
         Project project = projectRequestDto.toEntity(projectRequestDto, user);
@@ -39,7 +44,9 @@ public class ProjectService{
         Project project = projectRepository.findProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
         List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream().map(Hashtag::getContent).toList();
-        return ProjectContentResponseDto.of(project, projectHashtags);
+        List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(project);
+        System.out.println(libraryContentResponseDtos);
+        return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos);
     }
 
     public void addHashtag(ProjectHashtagRequestDto projectHashtagRequestDto){

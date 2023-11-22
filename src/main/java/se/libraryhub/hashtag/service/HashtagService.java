@@ -5,13 +5,9 @@ import org.springframework.stereotype.Service;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.Library;
-import se.libraryhub.library.domain.dto.response.LibraryResponseDto;
 import se.libraryhub.library.repository.LibraryRepository;
-import se.libraryhub.library.service.LibraryService;
 import se.libraryhub.project.domain.Project;
-import se.libraryhub.project.domain.dto.ProjectContentResponseDto;
 import se.libraryhub.project.repository.ProjectRepository;
-import se.libraryhub.project.service.ProjectService;
 
 import java.util.List;
 

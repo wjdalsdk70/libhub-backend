@@ -17,6 +17,7 @@ import se.libraryhub.project.domain.dto.ProjectHashtagRequestDto;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.project.service.ProjectService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,6 +32,16 @@ public class LibraryService {
         Library library = libraryRepository.findLibraryByLibraryId(libraryId).orElseThrow();
         List<String> libraryHashtags = hashtagRepository.findAllByLibrary(library).stream().map(Hashtag::getContent).toList();
         return LibraryContentResponseDto.of(library, libraryHashtags);
+    }
+
+    public List<LibraryContentResponseDto> getProjectLibraries(Project project){
+        List<LibraryContentResponseDto> libraryContentResponseDtos = new ArrayList<>();
+        List<Library> libraries = libraryRepository.findLibrariesByProject(project);
+        libraries.forEach((library -> {
+            List<String> libraryHashtags = hashtagRepository.findAllByLibrary(library).stream().map(Hashtag::getContent).toList();
+            libraryContentResponseDtos.add(LibraryContentResponseDto.of(library, libraryHashtags));
+        }));
+        return libraryContentResponseDtos;
     }
 
     public LibraryResponseDto addLibrary(LibraryRequestDto libraryRequestDto) {

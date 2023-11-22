@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import se.libraryhub.library.domain.Library;
+import se.libraryhub.library.repository.LibraryRepository;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.User;
@@ -18,28 +20,30 @@ public class DataInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final LibraryRepository libraryRepository;
     private List<User> users = new ArrayList<>();
     private List<Project> projects = new ArrayList<>();
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        initUser();
-//        initProject();
+        initUser();
+        initProject();
+        initLibrary();
     }
 
     public void initUser(){
         User user1 = User.builder()
-                .email("ilovekdh1208@gmail.com")
+                .email("user1@gmail.com")
                 .profileImageUrl("url")
                 .username("kim")
                 .build();
         User user2 = User.builder()
-                .email("ilovekdh1208@ajou.ac.kr")
+                .email("user2@ajou.ac.kr")
                 .profileImageUrl("url")
                 .username("dong")
                 .build();
         User user3 = User.builder()
-                .email("ilovegame@ajou.ac.kr")
+                .email("user3@ajou.ac.kr")
                 .profileImageUrl("url")
                 .username("hyun")
                 .build();
@@ -50,36 +54,30 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     public void initProject(){
-        Project project1 = Project.builder()
-                .projectLink("purl1")
-                .projectname("pn1")
-                .isPublic(true)
-                .user(users.get(0))
-                .build();
-        Project project2 = Project.builder()
-                .projectLink("purl2")
-                .projectname("pn2")
-                .isPublic(false)
-                .user(users.get(0))
-                .build();
-        Project project3 = Project.builder()
-                .projectLink("purl3")
-                .projectname("pn3")
-                .isPublic(true)
-                .user(users.get(1))
-                .build();
-        projects.add(projectRepository.save(project1));
-        projects.add(projectRepository.save(project2));
-        projects.add(projectRepository.save(project3));
-
         for(int i = 0; i < 20; i++){
             Project project = Project.builder()
                     .projectLink("purl"+i)
-                    .projectname("proname"+i)
+                    .projectname("Sample Project for User " + (i % users.size() + 1))
                     .isPublic(true)
-                    .user(users.get(1))
+                    .user(users.get(i % users.size()))
                     .build();
             projects.add(projectRepository.save(project));
         }
+    }
+
+    public void initLibrary() {
+        for (int i = 0; i < 40; i++) {
+            Library library = Library.builder()
+                    .project(projects.get(i % projects.size()))
+                    .libraryname("lib" + i)
+                    .version("1.0.0")
+                    .usecase("Sample Library for project " + (i % projects.size() + 1))
+                    .build();
+            libraryRepository.save(library);
+        }
+    }
+
+    public void initHashtag(){
+
     }
 }
