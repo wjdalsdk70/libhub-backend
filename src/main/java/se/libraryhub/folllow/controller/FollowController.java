@@ -8,7 +8,7 @@ import se.libraryhub.user.domain.dto.UserResponseDto;
 import java.util.*;
 
 @RestController
-@RequestMapping("api/follow")
+@RequestMapping("/api/follow")
 public class FollowController {
 
     @PostMapping("/follow")
