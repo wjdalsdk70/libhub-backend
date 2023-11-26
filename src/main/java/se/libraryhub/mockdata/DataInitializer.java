@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import se.libraryhub.favorite.domain.Favorite;
+import se.libraryhub.favorite.repository.FavoriteRepository;
 import se.libraryhub.library.domain.Library;
 import se.libraryhub.library.repository.LibraryRepository;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.repository.ProjectRepository;
+import se.libraryhub.user.domain.Role;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.repository.UserRepository;
 
@@ -21,36 +24,45 @@ public class DataInitializer implements ApplicationRunner {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final LibraryRepository libraryRepository;
+    private final FavoriteRepository favoriteRepository;
+
     private List<User> users = new ArrayList<>();
     private List<Project> projects = new ArrayList<>();
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        initUser();
-//        initProject();
-//        initLibrary();
+        initUser();
+        initProject();
+        initLibrary();
+        initFavorite();
     }
 
     public void initUser(){
         User user1 = User.builder()
                 .email("user1@gmail.com")
-                .profileImageUrl("url")
+                .profileImageUrl("url1")
                 .username("kim")
                 .build();
         User user2 = User.builder()
                 .email("user2@ajou.ac.kr")
-                .profileImageUrl("url")
+                .profileImageUrl("url2")
                 .username("dong")
                 .build();
         User user3 = User.builder()
                 .email("user3@ajou.ac.kr")
-                .profileImageUrl("url")
+                .profileImageUrl("url3")
                 .username("hyun")
+                .build();
+        User user4 = User.builder()
+                .email("user4@gmail.com")
+                .profileImageUrl("url4")
+                .username("ajou")
                 .build();
 
         users.add(userRepository.save(user1));
         users.add(userRepository.save(user2));
         users.add(userRepository.save(user3));
+        users.add(userRepository.save(user4));
     }
 
     public void initProject(){
@@ -90,5 +102,15 @@ public class DataInitializer implements ApplicationRunner {
 
     public void initHashtag(){
 
+    }
+
+    public void initFavorite(){
+        for(int i = 0; i < projects.size(); i++){
+            Favorite favorite = Favorite.builder()
+                    .user(users.get(i % users.size()))
+                    .project(projects.get(i))
+                    .build();
+            favoriteRepository.save(favorite);
+        }
     }
 }

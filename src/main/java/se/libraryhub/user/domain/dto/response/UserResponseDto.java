@@ -1,15 +1,9 @@
-package se.libraryhub.user.domain.dto;
+package se.libraryhub.user.domain.dto.response;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import se.libraryhub.user.domain.Role;
 import se.libraryhub.user.domain.User;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Data

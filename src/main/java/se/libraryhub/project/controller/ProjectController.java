@@ -87,4 +87,11 @@ public class ProjectController {
     public Page<Project> pagingMyProject(@PathVariable int pageNumber, Pageable pageable){
         return projectService.pagingMyProjects(getCurrentUser(), pageNumber);
     }
+
+    @Operation(summary = "프로젝트 좋아요 누르기",
+            description = "프로젝트에 좋아요가 눌려있다면 취소가, 안 눌려있다면 좋아요가 눌린다")
+    @PostMapping("/{projectId}/favorite")
+    public void pressFavorite(@PathVariable Long projectId){
+        projectService.pressFavorite(projectId);
+    }
 }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
+import se.libraryhub.favorite.service.FavoriteService;
 import se.libraryhub.global.error.project.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
@@ -29,8 +31,8 @@ public class ProjectService{
 
     private final ProjectRepository projectRepository;
     private final HashtagRepository hashtagRepository;
-    private final LibraryRepository libraryRepository;
     private final LibraryService libraryService;
+    private final FavoriteService favoriteService;
 
     public ProjectResponseDto postProject(ProjectContentRequestDto projectContentRequestDto, User user) {
         Project project = ProjectContentRequestDto.toEntity(projectContentRequestDto, user);
@@ -69,14 +71,16 @@ public class ProjectService{
                 .orElseThrow(ProjectNotFoundException::new);
         List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream().map(Hashtag::getContent).toList();
         List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(project);
-        return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos);
+        FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
+        return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos, favoriteResponseDto);
     }
 
     public ProjectContentResponseDto updateProject(Long projectId, ProjectContentRequestDto projectContentRequestDto){
-        Project findProject = projectRepository.findProjectByProjectId
-                (projectId).orElseThrow(ProjectNotFoundException::new);
+        Project findProject = projectRepository.findProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
         Project.updateProject(findProject, projectContentRequestDto);
         Project updatedProject = projectRepository.save(findProject);
+
         hashtagRepository.deleteAllByProject(updatedProject);
         projectContentRequestDto.getProjectHashtags().stream().forEach(s -> {
             hashtagRepository.save(Hashtag.projectHashtag(updatedProject, s));
@@ -84,8 +88,12 @@ public class ProjectService{
         List<String> projectHashtags = hashtagRepository.findAllByProject(updatedProject).stream().map(
                 hashtag -> hashtag.getContent()
         ).toList();
+
         List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(updatedProject);
-        return ProjectContentResponseDto.of(updatedProject, projectHashtags, libraryContentResponseDtos);
+
+        FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(updatedProject);
+
+        return ProjectContentResponseDto.of(updatedProject, projectHashtags, libraryContentResponseDtos, favoriteResponseDto);
     }
 
     public void deleteProject(Long projectId){
@@ -102,5 +110,10 @@ public class ProjectService{
     public Page<Project> pagingMyProjects(User user, int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by("createDate").descending());
         return projectRepository.findByUser(user, pageable);
+    }
+
+    public void pressFavorite(Long projectId) {
+        favoriteService.pressFavorite(projectRepository.findProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new));
     }
 }

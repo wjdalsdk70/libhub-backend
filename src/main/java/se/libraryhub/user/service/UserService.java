@@ -2,6 +2,8 @@ package se.libraryhub.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.libraryhub.favorite.service.FavoriteService;
+import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.user.domain.User;
@@ -15,6 +17,7 @@ import java.util.List;
 public class UserService{
 
     private final UserRepository userRepository;
+    private final FavoriteService favoriteService;
 
     public User registerUser(String username, String email, String profileImageUrl, List<String> userLinks) {
         if(isExistingEmail(email)){
@@ -63,5 +66,9 @@ public class UserService{
 
     public List<User> searchUserByUsername(String username) {
         return userRepository.searchAllByUsername(username);
+    }
+
+    public List<ProjectResponseDto> getFavoriteProjects() {
+        return favoriteService.userFavoriteInfo();
     }
 }

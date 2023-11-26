@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.user.domain.User;
-import se.libraryhub.user.domain.dto.UserResponseDto;
+import se.libraryhub.user.domain.dto.response.UserResponseDto;
 
 import java.util.List;
 
