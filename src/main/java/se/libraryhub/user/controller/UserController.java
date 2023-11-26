@@ -32,7 +32,7 @@ public class UserController {
     public UserResponseDto updateUser(@RequestBody UserUpdateRequestDto userRequestDto){
         User user = getCurrentUser();
         return UserResponseDto.of(
-                userService.updateUser(user.getId(), userRequestDto.getUsername(), userRequestDto.getProfileImageUrl())
+                userService.updateUser(user, userRequestDto)
         );
     }
 

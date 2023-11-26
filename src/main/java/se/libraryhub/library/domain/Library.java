@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import se.libraryhub.global.util.BaseTimeEntity;
+import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.project.domain.Project;
 
 import javax.persistence.*;
@@ -31,13 +32,23 @@ public class Library extends BaseTimeEntity {
 
     private String version;
 
+    private String description;
+
     private String usecase;
 
     @Builder
-    public Library(Project project, String libraryname, String version, String usecase) {
+    public Library(Project project, String libraryname, String version, String description, String usecase) {
         this.project = project;
         this.libraryname = libraryname;
         this.version = version;
+        this.description = description;
         this.usecase = usecase;
+    }
+
+    public void updateLibrary(LibraryContentRequestDto libraryContentRequestDto){
+        this.description = libraryContentRequestDto.getDescription();
+        this.libraryname = libraryContentRequestDto.getLibraryname();
+        this.version = libraryContentRequestDto.getVersion();
+        this.usecase = libraryContentRequestDto.getUsecase();
     }
 }

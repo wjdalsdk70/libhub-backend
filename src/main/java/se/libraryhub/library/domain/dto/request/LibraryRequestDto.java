@@ -15,14 +15,18 @@ public class LibraryRequestDto {
 
     private String libraryname;
 
+    private String description;
+
     private String version;
 
     private String usecase;
 
     @Builder
-    public LibraryRequestDto(Long projectId, String libraryname, String version, String usecase) {
+    public LibraryRequestDto(Long projectId, String libraryname, String version, String usecase,
+                             String description) {
         this.projectId = projectId;
         this.libraryname = libraryname;
+        this.description = description;
         this.version = version;
         this.usecase = usecase;
     }
@@ -32,6 +36,7 @@ public class LibraryRequestDto {
                 .libraryname(libraryRequestDto.getLibraryname())
                 .usecase(libraryRequestDto.getUsecase())
                 .version(libraryRequestDto.getVersion())
+                .description(libraryRequestDto.getDescription())
                 .project(project)
                 .build();
     }

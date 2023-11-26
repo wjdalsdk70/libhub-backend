@@ -6,14 +6,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import se.libraryhub.global.error.ProjectNotFoundException;
+import se.libraryhub.global.error.project.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.library.repository.LibraryRepository;
 import se.libraryhub.library.service.LibraryService;
 import se.libraryhub.project.domain.Project;
-import se.libraryhub.project.domain.dto.*;
+import se.libraryhub.project.domain.dto.request.ProjectContentRequestDto;
+import se.libraryhub.project.domain.dto.request.ProjectHashtagRequestDto;
+import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.User;
 
@@ -28,24 +32,43 @@ public class ProjectService{
     private final LibraryRepository libraryRepository;
     private final LibraryService libraryService;
 
-    public ProjectResponseDto postProject(ProjectRequestDto projectRequestDto, User user) {
-        Project project = projectRequestDto.toEntity(projectRequestDto, user);
+    public ProjectResponseDto postProject(ProjectContentRequestDto projectContentRequestDto, User user) {
+        Project project = ProjectContentRequestDto.toEntity(projectContentRequestDto, user);
         Project postedProject = projectRepository.save(project);
-        return ProjectResponseDto.of(postedProject, user);
+
+        projectContentRequestDto.getProjectHashtags().forEach(s -> {
+            hashtagRepository.save(Hashtag.projectHashtag(postedProject, s));
+        });
+        List<String> projectHashtags = hashtagRepository.findAllByProject(postedProject).stream()
+                .map(Hashtag::getContent).toList();
+
+        return ProjectResponseDto.of(postedProject, projectHashtags, user);
     }
 
-    public ProjectResult getProjectList(User user){
+    public ProjectResult getProjectList(){
+        List<Project> allProjects = projectRepository.findAll();
+        List<Project> publicProjects = allProjects.stream().filter(Project::getIsPublic).toList();
+        return new ProjectResult(publicProjects.stream().map((project -> {
+            List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
+                    .map(Hashtag::getContent).toList();
+            return ProjectResponseDto.of(project, projectHashtags, project.getUser());
+        })).toList());
+    }
+
+    public ProjectResult getUserProjectList(User user){
         List<Project> userProjects = projectRepository.findAllByUser(user);
-        return new ProjectResult(userProjects.stream().map((project -> ProjectResponseDto.of(project, user))).toList());
+        return new ProjectResult(userProjects.stream().map((project -> {
+            List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
+                    .map(Hashtag::getContent).toList();
+            return ProjectResponseDto.of(project, projectHashtags, user);
+        })).toList());
     }
 
-//    TODO: 라이브러리 리스트들도 가져오도록 수정
     public ProjectContentResponseDto getProject(Long projectId){
         Project project = projectRepository.findProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
         List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream().map(Hashtag::getContent).toList();
         List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(project);
-        System.out.println(libraryContentResponseDtos);
         return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos);
     }
 
@@ -55,6 +78,28 @@ public class ProjectService{
                 .orElseThrow(ProjectNotFoundException::new);
         Hashtag hashtag = Hashtag.projectHashtag(project, projectHashtagRequestDto.getContent());
         hashtagRepository.save(hashtag);
+    }
+
+    public ProjectContentResponseDto updateProject(Long projectId, ProjectContentRequestDto projectContentRequestDto){
+        Project findProject = projectRepository.findProjectByProjectId
+                (projectId).orElseThrow(ProjectNotFoundException::new);
+        Project.updateProject(findProject, projectContentRequestDto);
+        Project updatedProject = projectRepository.save(findProject);
+        hashtagRepository.deleteAllByProject(updatedProject);
+        projectContentRequestDto.getProjectHashtags().stream().forEach(s -> {
+            hashtagRepository.save(Hashtag.projectHashtag(updatedProject, s));
+        });
+        List<String> projectHashtags = hashtagRepository.findAllByProject(updatedProject).stream().map(
+                hashtag -> hashtag.getContent()
+        ).toList();
+        List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(updatedProject);
+        return ProjectContentResponseDto.of(updatedProject, projectHashtags, libraryContentResponseDtos);
+    }
+
+    public void deleteProject(Long projectId){
+        Project findProject = projectRepository.findProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        projectRepository.delete(findProject);
     }
 
     public Page<Project> pagingProjects(int pageNumber){

@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
 import se.libraryhub.project.domain.Project;
-import se.libraryhub.project.domain.dto.*;
+import se.libraryhub.project.domain.dto.request.ProjectContentRequestDto;
+import se.libraryhub.project.domain.dto.request.ProjectHashtagRequestDto;
+import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.project.service.ProjectService;
 
 import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
@@ -23,19 +27,45 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @Operation(summary = "프로젝트 등록",
+            description = "로그인한 유저의 정보와 프로젝트 등록 정보를 함께 저장" +
+                    " 프로젝트 미리보기 정보 반환, 라이브러리는 없는 상태")
     @PostMapping
-    public ProjectResponseDto postProject(@RequestBody ProjectRequestDto projectRequestDto){
-        return projectService.postProject(projectRequestDto, getCurrentUser());
+    public ProjectResponseDto postProject(@RequestBody ProjectContentRequestDto projectContentRequestDto){
+        return projectService.postProject(projectContentRequestDto, getCurrentUser());
     }
 
+    @Operation(summary = "모든 공개 프로젝트 조회")
     @GetMapping
     public ProjectResult getAllProjects(){
-        return projectService.getProjectList(getCurrentUser());
+        return projectService.getProjectList();
     }
 
+    @Operation(summary = "현재 로그인한 유저의 모든 프로젝트 조회",
+            description = "로그인한 상태인지는 세션에 유저가 있는지로 판단")
+    @GetMapping("/myprojects")
+    public ProjectResult getAllUserProjects(){
+        return projectService.getUserProjectList(getCurrentUser());
+    }
+
+    @Operation(summary = "프로젝트 상세 내용 조회",
+            description = "프로젝트 ID를 이용해 상세 내용 반환, 하위의 라이브러리들과 유저 정보 포함")
     @GetMapping("/{projectId}")
     public ProjectContentResponseDto getProject(@PathVariable Long projectId){
         return projectService.getProject(projectId);
+    }
+
+    @Operation(summary = "프로젝트 업데이트",
+                description = "프로젝트 업데이트 후, 프로젝트 상세 정보 반환")
+    @PatchMapping("/{projectId}")
+    public ProjectContentResponseDto updateProject(@PathVariable Long projectId, @RequestBody ProjectContentRequestDto projectContentRequestDto){
+        return projectService.updateProject(projectId, projectContentRequestDto);
+    }
+
+    @Operation(summary = "프로젝트 삭제")
+    @DeleteMapping("/{projectId}")
+    public void deleteProject(@PathVariable("projectId") Long projectId){
+        projectService.deleteProject(projectId);
     }
 
     @PostMapping("/hashtag")

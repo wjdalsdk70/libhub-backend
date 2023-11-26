@@ -14,6 +14,10 @@ public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 
     List<Hashtag> findAllByLibrary(Library library);
 
+    void deleteAllByProject(Project project);
+
+    void deleteAllByLibrary(Library library);
+
     List<Hashtag> searchAllByProjectNotNullAndContent(String content);
 
     List<Hashtag> searchAllByLibraryNotNullAndContent(String content);

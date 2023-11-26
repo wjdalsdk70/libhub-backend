@@ -4,17 +4,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.library.domain.Library;
-import se.libraryhub.project.domain.Project;
-import se.libraryhub.project.domain.dto.ProjectContentResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,6 +16,8 @@ public class LibraryResponseDto {
     private Long libraryId;
 
     private ProjectContentResponseDto projectContentResponseDto;
+
+    private String description;
 
     private String libraryname;
 
@@ -37,7 +32,8 @@ public class LibraryResponseDto {
     @Builder
     public LibraryResponseDto(Long libraryId, ProjectContentResponseDto projectContentResponseDto, String libraryname,
                               String version, String usecase,
-                              LocalDateTime createDate, LocalDateTime modifiedDate) {
+                              LocalDateTime createDate, LocalDateTime modifiedDate,
+                              String description) {
         this.libraryId = libraryId;
         this.projectContentResponseDto = projectContentResponseDto;
         this.libraryname = libraryname;
@@ -45,6 +41,7 @@ public class LibraryResponseDto {
         this.usecase = usecase;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
+        this.description = description;
     }
 
     public static LibraryResponseDto of(Library library){
@@ -55,6 +52,7 @@ public class LibraryResponseDto {
                 .modifiedDate(library.getModifiedDate())
                 .usecase(library.getUsecase())
                 .version(library.getVersion())
+                .description(library.getDescription())
                 .build();
     }
 }

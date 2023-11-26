@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserUpdateRequestDto {
@@ -13,9 +15,12 @@ public class UserUpdateRequestDto {
 
     private String profileImageUrl;
 
+    private List<String> userLinks;
+
     @Builder
-    public UserUpdateRequestDto(String username, String profileImageUrl) {
+    public UserUpdateRequestDto(String username, String profileImageUrl, List<String> userLinks) {
         this.username = username;
         this.profileImageUrl = profileImageUrl;
+        this.userLinks = userLinks;
     }
 }

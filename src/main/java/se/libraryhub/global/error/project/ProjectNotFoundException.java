@@ -1,4 +1,4 @@
-package se.libraryhub.global.error;
+package se.libraryhub.global.error.project;
 
 import se.libraryhub.global.errormsg.ProjectError;
 import se.libraryhub.global.errormsg.UserError;

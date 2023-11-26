@@ -3,6 +3,7 @@ package se.libraryhub.library.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import se.libraryhub.library.domain.Library;
+import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.library.domain.dto.request.LibraryHashtagRequestDto;
 import se.libraryhub.library.domain.dto.request.LibraryRequestDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
@@ -33,4 +34,13 @@ public class LibraryController {
         libraryService.addHashtag(libraryHashtagRequestDto);
     }
 
+    @PatchMapping("/{libraryId}")
+    public LibraryContentResponseDto updateLibrary(@RequestBody LibraryContentRequestDto libraryContentRequestDto){
+        return libraryService.updateLibrary(libraryContentRequestDto);
+    }
+
+    @DeleteMapping("{libraryId}")
+    public void deleteLibrary(@PathVariable Long libraryId){
+        libraryService.deleteLibrary(libraryId);
+    }
 }

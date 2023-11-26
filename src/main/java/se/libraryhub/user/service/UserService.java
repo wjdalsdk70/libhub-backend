@@ -3,8 +3,9 @@ package se.libraryhub.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.libraryhub.security.oauth.SecurityUtil;
-import se.libraryhub.global.error.UserNotFoundException;
+import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.user.domain.User;
+import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
 import se.libraryhub.user.repository.UserRepository;
 
 import java.util.List;
@@ -15,18 +16,20 @@ public class UserService{
 
     private final UserRepository userRepository;
 
-    public User registerUser(String username, String email, String profileImageUrl) {
+    public User registerUser(String username, String email, String profileImageUrl, List<String> userLinks) {
         if(isExistingEmail(email)){
             throw new UserNotFoundException();
         }
-        return userRepository.save(new User(username, email, profileImageUrl));
+        return userRepository.save(new User(username, email, profileImageUrl, userLinks));
     }
 
-    public User updateUser(Long userId, String username, String profileImageUrl) {
-        User user = findUserById(userId);
-        user.updateUser(username, profileImageUrl);
-        userRepository.save(user);
-        return user;
+    public User updateUser(User user, UserUpdateRequestDto userUpdateRequestDto) {
+        User findUser = findUserById(user.getId());
+        findUser.updateUser(userUpdateRequestDto.getUsername(),
+                userUpdateRequestDto.getProfileImageUrl(),
+                userUpdateRequestDto.getUserLinks());
+        userRepository.save(findUser);
+        return findUser;
     }
 
     public User findUserByEmail(String email) {

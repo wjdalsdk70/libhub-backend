@@ -3,12 +3,13 @@ package se.libraryhub.global.errormsg;
 import lombok.Getter;
 
 @Getter
-public enum ProjectError {
-    PROJECT_NOT_EXIST("해당 프로젝트가 존재하지 않습니다.");
+public enum LibraryError {
+
+    LIBRARY_NOT_EXIST("해당 라이브러리가 존재하지 않습니다.");
 
     private final String message;
 
-    ProjectError(String message) {
+    LibraryError(String message) {
         this.message = message;
     }
 }

@@ -1,4 +1,4 @@
-package se.libraryhub.project.domain.dto;
+package se.libraryhub.project.domain.dto.request;
 
 import lombok.*;
 

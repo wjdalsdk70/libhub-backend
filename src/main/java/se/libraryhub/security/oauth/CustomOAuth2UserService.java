@@ -34,7 +34,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private User saveIfNotExist(OAuth2UserInfo oAuth2UserInfo) {
         if (!userService.isExistingEmail(oAuth2UserInfo.getEmail())) {
-            return userService.registerUser(oAuth2UserInfo.getName(), oAuth2UserInfo.getEmail(), oAuth2UserInfo.getPicture());
+            return userService.registerUser(oAuth2UserInfo.getName(), oAuth2UserInfo.getEmail(),
+                    oAuth2UserInfo.getPicture(), null);
         }
         return userService.findUserByEmail(oAuth2UserInfo.getEmail());
     }

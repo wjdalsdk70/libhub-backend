@@ -1,4 +1,4 @@
-package se.libraryhub.library.domain.dto.response;
+package se.libraryhub.library.domain.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LibraryContentResponseDto {
+public class LibraryContentRequestDto {
 
     private Long libraryId;
 
@@ -30,7 +30,7 @@ public class LibraryContentResponseDto {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public LibraryContentResponseDto(Long libraryId, String libraryname, String version, String usecase,
+    public LibraryContentRequestDto(Long libraryId, String libraryname, String version, String usecase,
                                      List<String> libraryHashtags, LocalDateTime createDate, LocalDateTime modifiedDate,
                                      String description) {
         this.libraryId = libraryId;
@@ -43,8 +43,8 @@ public class LibraryContentResponseDto {
         this.description = description;
     }
 
-    public static LibraryContentResponseDto of(Library library, List<String> hashtags){
-        return LibraryContentResponseDto.builder()
+    public static LibraryContentRequestDto of(Library library, List<String> hashtags){
+        return LibraryContentRequestDto.builder()
                 .createDate(library.getCreateDate())
                 .libraryId(library.getLibraryId())
                 .libraryHashtags(hashtags)

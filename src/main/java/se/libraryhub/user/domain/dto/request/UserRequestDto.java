@@ -3,6 +3,8 @@ package se.libraryhub.user.domain.dto.request;
 import lombok.*;
 import se.libraryhub.user.domain.User;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserRequestDto {
@@ -13,11 +15,14 @@ public class UserRequestDto {
 
     private String profileImageUrl;
 
+    private List<String> userLinks;
+
     @Builder
-    public UserRequestDto(String username, String email, String profileImageUrl) {
+    public UserRequestDto(String username, String email, String profileImageUrl, List<String> userLinks) {
         this.username = username;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
+        this.userLinks = userLinks;
     }
 
     public User toEntity(UserRequestDto userRequestDto){
@@ -25,6 +30,7 @@ public class UserRequestDto {
                 .email(userRequestDto.getEmail())
                 .profileImageUrl(userRequestDto.getProfileImageUrl())
                 .username(userRequestDto.getUsername())
+                .userLinks(userRequestDto.getUserLinks())
                 .build();
     }
 
@@ -33,6 +39,7 @@ public class UserRequestDto {
                 .email(user.getEmail())
                 .profileImageUrl(user.getProfileImageUrl())
                 .username(user.getUsername())
+                .userLinks(user.getUserLinks())
                 .build();
     }
 }

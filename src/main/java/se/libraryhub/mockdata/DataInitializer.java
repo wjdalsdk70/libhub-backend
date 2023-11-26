@@ -26,9 +26,9 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        initUser();
-        initProject();
-        initLibrary();
+//        initUser();
+//        initProject();
+//        initLibrary();
     }
 
     public void initUser(){
@@ -56,9 +56,20 @@ public class DataInitializer implements ApplicationRunner {
     public void initProject(){
         for(int i = 0; i < 20; i++){
             Project project = Project.builder()
-                    .projectLink("purl"+i)
-                    .projectname("Sample Project for User " + (i % users.size() + 1))
+                    .projectLinks(List.of("purl"+i, "purl"+i+1, "purl"+i+2))
+                    .projectname("Sample Public Project for User " + (i % users.size() + 1))
+                    .description("Public project description")
                     .isPublic(true)
+                    .user(users.get(i % users.size()))
+                    .build();
+            projects.add(projectRepository.save(project));
+        }
+        for(int i = 0; i < 10; i++){
+            Project project = Project.builder()
+                    .projectLinks(List.of("purl"+i, "purl"+i+1, "purl"+i+2))
+                    .projectname("Sample Private Project for User " + (i % users.size() + 1))
+                    .description("Private project description")
+                    .isPublic(false)
                     .user(users.get(i % users.size()))
                     .build();
             projects.add(projectRepository.save(project));
@@ -71,7 +82,8 @@ public class DataInitializer implements ApplicationRunner {
                     .project(projects.get(i % projects.size()))
                     .libraryname("lib" + i)
                     .version("1.0.0")
-                    .usecase("Sample Library for project " + (i % projects.size() + 1))
+                    .description("Sample Library for project " + (i % projects.size() + 1))
+                    .usecase("Being Used To Project")
                     .build();
             libraryRepository.save(library);
         }

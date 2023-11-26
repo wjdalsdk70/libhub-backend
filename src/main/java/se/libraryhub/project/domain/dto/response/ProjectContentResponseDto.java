@@ -1,11 +1,10 @@
-package se.libraryhub.project.domain.dto;
+package se.libraryhub.project.domain.dto.response;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import se.libraryhub.library.domain.Library;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.project.domain.Project;
+import se.libraryhub.user.domain.dto.UserResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +18,9 @@ public class ProjectContentResponseDto {
 
     private String projectname;
 
-    private String projectLink;
+    private List<String> projectLinks;
+
+    private String description;
 
     private Boolean isPublic;
 
@@ -27,20 +28,26 @@ public class ProjectContentResponseDto {
 
     private List<LibraryContentResponseDto> projectLibraries;
 
+    private UserResponseDto userResponseDto;
+
     private LocalDateTime createdDate;
 
     private LocalDateTime modifiedDate;
 
     @Builder
-    public ProjectContentResponseDto(Long projectId, String projectname, String projectLink,
-                                     Boolean isPublic, List<String> projectHashtags, List<LibraryContentResponseDto> libraryContentResponseDtos,
-                                     LocalDateTime createdDate , LocalDateTime modifiedDate) {
+    public ProjectContentResponseDto(Long projectId, String projectname, List<String> projectLinks, 
+                                     String description, Boolean isPublic, List<String> projectHashtags, 
+                                     List<LibraryContentResponseDto> projectLibraries,
+                                     UserResponseDto userResponseDto,
+                                     LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.projectId = projectId;
         this.projectname = projectname;
-        this.projectLink = projectLink;
-        this.projectHashtags = projectHashtags;
-        this.projectLibraries = libraryContentResponseDtos;
+        this.projectLinks = projectLinks;
+        this.description = description;
         this.isPublic = isPublic;
+        this.userResponseDto = userResponseDto;
+        this.projectHashtags = projectHashtags;
+        this.projectLibraries = projectLibraries;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
     }
@@ -49,12 +56,14 @@ public class ProjectContentResponseDto {
         return ProjectContentResponseDto.builder()
                 .projectId(project.getProjectId())
                 .projectname(project.getProjectname())
-                .projectLink(project.getProjectLink())
+                .projectLinks(project.getProjectLinks())
                 .createdDate(project.getCreateDate())
                 .modifiedDate(project.getModifiedDate())
                 .projectHashtags(hashtags)
                 .isPublic(project.getIsPublic())
-                .libraryContentResponseDtos(libraryContentResponseDtos)
+                .description(project.getDescription())
+                .userResponseDto(UserResponseDto.of(project.getUser()))
+                .projectLibraries(libraryContentResponseDtos)
                 .build();
     }
 }
