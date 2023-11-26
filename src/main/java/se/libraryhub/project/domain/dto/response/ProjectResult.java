@@ -15,4 +15,6 @@ import java.util.List;
 public class ProjectResult {
 
     private List<ProjectResponseDto> projectResult;
+
+    private int totalPage;
 }

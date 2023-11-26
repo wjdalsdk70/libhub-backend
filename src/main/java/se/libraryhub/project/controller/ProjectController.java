@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
+import se.libraryhub.project.domain.PagingMode;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.domain.dto.request.ProjectContentRequestDto;
-import se.libraryhub.project.domain.dto.request.ProjectHashtagRequestDto;
 import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResult;
@@ -74,8 +74,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "최대 프로젝트 페이지 수를 넘는 요청을 했을 때 발생")
     })
     @GetMapping("/page/{pageNumber}")
-    public Page<Project> pagingProject(@PathVariable int pageNumber, Pageable pageable){
-        return projectService.pagingProjects(pageNumber);
+    public ProjectResult pagingProject(@PathVariable int pageNumber, @RequestParam PagingMode pagingMode){
+        return projectService.pagingProjects(pageNumber, pagingMode);
     }
 
     @Operation(summary = "마이 페이지에서 자신의 프로젝트 페이징",
@@ -84,7 +84,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "최대 프로젝트 페이지 수를 넘는 요청을 했을 때 발생")
     })
     @GetMapping("/mypage/{pageNumber}")
-    public Page<Project> pagingMyProject(@PathVariable int pageNumber, Pageable pageable){
+    public ProjectResult pagingMyProject(@PathVariable int pageNumber, @RequestParam PagingMode pagingMode){
         return projectService.pagingMyProjects(getCurrentUser(), pageNumber);
     }
 

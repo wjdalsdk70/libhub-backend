@@ -41,7 +41,7 @@ public class FavoriteService {
             Project favoriteProject = favorite.getProject();
             List<Hashtag> hashtags = hashtagRepository.findAllByProject(favoriteProject);
             List<String> hashtagContents = hashtags.stream().map(Hashtag::getContent).toList();
-            return ProjectResponseDto.of(favoriteProject, hashtagContents, favoriteProject.getUser());
+            return ProjectResponseDto.of(favoriteProject, hashtagContents, favoriteProject.getUser(),projectFavoriteInfo(favoriteProject));
         }).toList();
     }
 

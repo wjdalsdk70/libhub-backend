@@ -7,7 +7,6 @@ import se.libraryhub.global.error.project.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.Library;
-import se.libraryhub.library.domain.dto.request.LibraryHashtagRequestDto;
 import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.library.domain.dto.response.LibraryResponseDto;

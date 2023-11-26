@@ -3,7 +3,6 @@ package se.libraryhub.library.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import se.libraryhub.library.domain.dto.request.LibraryHashtagRequestDto;
 import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.library.domain.dto.response.LibraryResponseDto;

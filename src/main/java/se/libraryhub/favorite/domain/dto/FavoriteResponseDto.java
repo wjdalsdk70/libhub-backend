@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema
-public class FavoriteResponseDto {
+public class FavoriteResponseDto implements Comparable<FavoriteResponseDto>{
 
     private int favoriteCount;
 
@@ -19,5 +19,10 @@ public class FavoriteResponseDto {
     public FavoriteResponseDto(int favoriteCount, boolean isLiked) {
         this.favoriteCount = favoriteCount;
         this.isLiked = isLiked;
+    }
+
+    @Override
+    public int compareTo(FavoriteResponseDto o) {
+        return o.getFavoriteCount();
     }
 }
