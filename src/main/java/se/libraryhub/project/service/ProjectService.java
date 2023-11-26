@@ -72,14 +72,6 @@ public class ProjectService{
         return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos);
     }
 
-    public void addHashtag(ProjectHashtagRequestDto projectHashtagRequestDto){
-
-        Project project = projectRepository.findProjectByProjectId(projectHashtagRequestDto.getProjectId())
-                .orElseThrow(ProjectNotFoundException::new);
-        Hashtag hashtag = Hashtag.projectHashtag(project, projectHashtagRequestDto.getContent());
-        hashtagRepository.save(hashtag);
-    }
-
     public ProjectContentResponseDto updateProject(Long projectId, ProjectContentRequestDto projectContentRequestDto){
         Project findProject = projectRepository.findProjectByProjectId
                 (projectId).orElseThrow(ProjectNotFoundException::new);

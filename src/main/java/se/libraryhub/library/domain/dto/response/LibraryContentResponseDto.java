@@ -19,8 +19,6 @@ public class LibraryContentResponseDto {
 
     private String version;
 
-    private String usecase;
-
     private String description;
 
     private List<String> libraryHashtags;
@@ -30,13 +28,12 @@ public class LibraryContentResponseDto {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public LibraryContentResponseDto(Long libraryId, String libraryname, String version, String usecase,
+    public LibraryContentResponseDto(Long libraryId, String libraryname, String version,
                                      List<String> libraryHashtags, LocalDateTime createDate, LocalDateTime modifiedDate,
                                      String description) {
         this.libraryId = libraryId;
         this.libraryname = libraryname;
         this.version = version;
-        this.usecase = usecase;
         this.libraryHashtags = libraryHashtags;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
@@ -50,7 +47,6 @@ public class LibraryContentResponseDto {
                 .libraryHashtags(hashtags)
                 .libraryname(library.getLibraryname())
                 .modifiedDate(library.getModifiedDate())
-                .usecase(library.getUsecase())
                 .version(library.getVersion())
                 .description(library.getDescription())
                 .build();

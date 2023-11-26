@@ -5,54 +5,37 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import se.libraryhub.library.domain.Library;
+import se.libraryhub.project.domain.Project;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LibraryContentRequestDto {
 
-    private Long libraryId;
-
     private String libraryname;
-
-    private String version;
-
-    private String usecase;
 
     private String description;
 
+    private String version;
+
     private List<String> libraryHashtags;
 
-    private LocalDateTime createDate;
-
-    private LocalDateTime modifiedDate;
-
     @Builder
-    public LibraryContentRequestDto(Long libraryId, String libraryname, String version, String usecase,
-                                     List<String> libraryHashtags, LocalDateTime createDate, LocalDateTime modifiedDate,
-                                     String description) {
-        this.libraryId = libraryId;
+    public LibraryContentRequestDto(String libraryname, String version,
+                                    String description, List<String> libraryHashtags) {
         this.libraryname = libraryname;
-        this.version = version;
-        this.usecase = usecase;
-        this.libraryHashtags = libraryHashtags;
-        this.createDate = createDate;
-        this.modifiedDate = modifiedDate;
         this.description = description;
+        this.version = version;
+        this.libraryHashtags = libraryHashtags;
     }
 
-    public static LibraryContentRequestDto of(Library library, List<String> hashtags){
-        return LibraryContentRequestDto.builder()
-                .createDate(library.getCreateDate())
-                .libraryId(library.getLibraryId())
-                .libraryHashtags(hashtags)
-                .libraryname(library.getLibraryname())
-                .modifiedDate(library.getModifiedDate())
-                .usecase(library.getUsecase())
-                .version(library.getVersion())
-                .description(library.getDescription())
+    public static Library toEntity(LibraryContentRequestDto libraryContentRequestDto, Project project){
+        return Library.builder()
+                .libraryname(libraryContentRequestDto.getLibraryname())
+                .version(libraryContentRequestDto.getVersion())
+                .description(libraryContentRequestDto.getDescription())
+                .project(project)
                 .build();
     }
 }

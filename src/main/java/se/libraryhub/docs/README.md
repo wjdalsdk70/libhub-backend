@@ -2,7 +2,7 @@
 Project Content Response Dto
 - [] 즐겨찾기 응답하기
 - [X] 라이브러리는 정보 다 주기
-- [] 라이브러리 설명도 usecase 대신 description으로 바꾸기
+- [X] 라이브러리 설명 usecase를 description로 바꾸기
 
 Project Response Dto
 - [X] Description 넣기

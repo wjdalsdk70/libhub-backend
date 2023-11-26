@@ -83,7 +83,6 @@ public class DataInitializer implements ApplicationRunner {
                     .libraryname("lib" + i)
                     .version("1.0.0")
                     .description("Sample Library for project " + (i % projects.size() + 1))
-                    .usecase("Being Used To Project")
                     .build();
             libraryRepository.save(library);
         }

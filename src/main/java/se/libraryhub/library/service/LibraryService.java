@@ -3,13 +3,12 @@ package se.libraryhub.library.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.libraryhub.global.error.library.LibraryNotFoundException;
-import se.libraryhub.global.errormsg.LibraryError;
+import se.libraryhub.global.error.project.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.Library;
-import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.library.domain.dto.request.LibraryHashtagRequestDto;
-import se.libraryhub.library.domain.dto.request.LibraryRequestDto;
+import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.library.domain.dto.response.LibraryResponseDto;
 import se.libraryhub.library.repository.LibraryRepository;
@@ -28,7 +27,7 @@ public class LibraryService {
     private final HashtagRepository hashtagRepository;
 
     public LibraryContentResponseDto getLibrary(Long libraryId) {
-        Library library = libraryRepository.findLibraryByLibraryId(libraryId).orElseThrow();
+        Library library = libraryRepository.findLibraryByLibraryId(libraryId).orElseThrow(LibraryNotFoundException::new);
         List<String> libraryHashtags = hashtagRepository.findAllByLibrary(library).stream().map(Hashtag::getContent).toList();
         return LibraryContentResponseDto.of(library, libraryHashtags);
     }
@@ -43,25 +42,15 @@ public class LibraryService {
         return libraryContentResponseDtos;
     }
 
-    public LibraryResponseDto addLibrary(LibraryRequestDto libraryRequestDto) {
-        Project project = projectRepository.findProjectByProjectId(libraryRequestDto.getProjectId())
-                .orElseThrow();
-        Library library = LibraryRequestDto.toEntity(libraryRequestDto, project);
+    public LibraryResponseDto addLibrary(Long projectId, LibraryContentRequestDto libraryContentRequestDto) {
+        Project project = projectRepository.findProjectByProjectId(projectId)
+                .orElseThrow(ProjectNotFoundException::new);
+        Library library = LibraryContentRequestDto.toEntity(libraryContentRequestDto, project);
         return LibraryResponseDto.of(libraryRepository.save(library));
     }
 
-    public void addHashtag(LibraryHashtagRequestDto libraryHashtagRequestDto) {
-        Library library = libraryRepository.findLibraryByLibraryId(libraryHashtagRequestDto.getLibraryId())
-                .orElseThrow();
-        Hashtag hashtag = Hashtag.builder()
-                .library(library)
-                .content(libraryHashtagRequestDto.getContent())
-                .build();
-        hashtagRepository.save(hashtag);
-    }
-
-    public LibraryContentResponseDto updateLibrary(LibraryContentRequestDto libraryContentRequestDto){
-        Library findLibrary = libraryRepository.findLibraryByLibraryId(libraryContentRequestDto.getLibraryId())
+    public LibraryContentResponseDto updateLibrary(Long libraryId, LibraryContentRequestDto libraryContentRequestDto){
+        Library findLibrary = libraryRepository.findLibraryByLibraryId(libraryId)
                 .orElseThrow(LibraryNotFoundException::new);
         findLibrary.updateLibrary(libraryContentRequestDto);
 
@@ -70,7 +59,7 @@ public class LibraryService {
         List<Hashtag> findAllLibraryHashtags = hashtagRepository.findAllByLibrary(findLibrary);
         hashtagRepository.deleteAll(findAllLibraryHashtags);
         List<String> libraryHashtags = libraryContentRequestDto.getLibraryHashtags();
-        libraryHashtags.stream().forEach((hashtag) -> {
+        libraryHashtags.forEach((hashtag) -> {
             hashtagRepository.save(Hashtag.libraryHashtag(findLibrary, hashtag));
         });
         return LibraryContentResponseDto.of(libraryRepository.save(findLibrary), libraryHashtags);
@@ -80,7 +69,7 @@ public class LibraryService {
         Library findLibrary = libraryRepository.findLibraryByLibraryId(libraryId)
                 .orElseThrow(LibraryNotFoundException::new);
         List<Hashtag> hashtags = hashtagRepository.findAllByLibrary(findLibrary);
-        hashtagRepository.deleteAll(hashtags);
+//        hashtagRepository.deleteAll(hashtags);
         libraryRepository.delete(findLibrary);
     }
 }

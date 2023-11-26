@@ -68,11 +68,6 @@ public class ProjectController {
         projectService.deleteProject(projectId);
     }
 
-    @PostMapping("/hashtag")
-    public void addHashtag(@RequestBody ProjectHashtagRequestDto projectHashtagRequestDto){
-        projectService.addHashtag(projectHashtagRequestDto);
-    }
-
     @Operation(summary = "페이지에서 전체 프로젝트 페이징",
             description = "pageNumber에 페이지 페이지 번호를 입력한다. 처음에 0으로 페이지를 조회해서 전체 페이지 크기를 구할 수 있으므로, 처음 보여줄 때 0을 넣고 조회하도록 추천,")
     @ApiResponses(value = {

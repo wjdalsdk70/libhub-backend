@@ -23,22 +23,19 @@ public class LibraryResponseDto {
 
     private String version;
 
-    private String usecase;
-
     private LocalDateTime createDate;
 
     private LocalDateTime modifiedDate;
 
     @Builder
     public LibraryResponseDto(Long libraryId, ProjectContentResponseDto projectContentResponseDto, String libraryname,
-                              String version, String usecase,
+                              String version,
                               LocalDateTime createDate, LocalDateTime modifiedDate,
                               String description) {
         this.libraryId = libraryId;
         this.projectContentResponseDto = projectContentResponseDto;
         this.libraryname = libraryname;
         this.version = version;
-        this.usecase = usecase;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
         this.description = description;
@@ -50,7 +47,6 @@ public class LibraryResponseDto {
                 .libraryId(library.getLibraryId())
                 .libraryname(library.getLibraryname())
                 .modifiedDate(library.getModifiedDate())
-                .usecase(library.getUsecase())
                 .version(library.getVersion())
                 .description(library.getDescription())
                 .build();
