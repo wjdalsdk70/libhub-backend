@@ -1,44 +1,73 @@
-//package se.libraryhub.folllow.service;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//import se.libraryhub.folllow.domain.Follow;
-//import se.libraryhub.folllow.repository.FollowRepository;
-//import se.libraryhub.user.domain.User;
-//
-//import java.util.List;
-//
-//@Service
-//@Transactional
-//@RequiredArgsConstructor
-//public class FollowService {
-//
-//    private final FollowRepository followRepository;
-//
-//    // 함수 추가: 유저가 다른 유저를 팔로우
-//    public void followUser(User userToFollow) {
-//        Follow follow = new Follow();
-//        follow.setFollowerUser(this);
-//        follow.setFollowUser(userToFollow);
-//
-//        // Follow 저장
-//        followRepository.save(follow);
-//    }
-//
-//    // 함수 추가: 유저가 팔로우 취소
-//    public void unfollowUser(User userToUnfollow) {
-//        Follow follow = followRepository.findByFollowerUserAndFollowUser(this, userToUnfollow);
-//        if (follow != null) {
-//            followRepository.delete(follow);
-//        }
-//    }
-//
-//    // 함수 추가: 유저가 팔로우하는 유저들 정보 가져오기
-//    public List<User> getFollowing() {
-//        List<Follow> follows = followRepository.findByFollowerUser(this);
-//        return follows.stream()
-//                .map(Follow::getFollowUser)
-//                .toList();
-//    }
-//}
+package se.libraryhub.folllow.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import se.libraryhub.folllow.domain.Follow;
+import se.libraryhub.folllow.repository.FollowRepository;
+import se.libraryhub.global.error.user.UserNotFoundException;
+import se.libraryhub.user.domain.User;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
+import se.libraryhub.user.domain.dto.response.UserResponseDto;
+import se.libraryhub.user.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class FollowService {
+
+    private final FollowRepository followRepository;
+    private final UserRepository userRepository;
+
+    public boolean followingUser(Long followUserId, Long followerUserId) {
+        Follow follow = followRepository.findByFollowUserIdAndFollowerUserId(followUserId, followerUserId)
+                .orElse(null);
+        if (follow != null) {
+            followRepository.delete(follow);
+            return true;
+        } else {
+            follow = Follow.builder()
+                    .followUser(userRepository.findUserById(followUserId).orElseThrow(UserNotFoundException::new))
+                    .followerUser(userRepository.findUserById(followerUserId).orElseThrow(UserNotFoundException::new))
+                    .build();
+            followRepository.save(follow);
+            return true;
+        }
+    }
+
+    public List<UserContentResponseDto> getFollowerList(Long userId) {
+        List<Follow> followerList = followRepository.findByFollowUserId(userId);
+        List<UserContentResponseDto> responseList = new ArrayList<>();
+        for (Follow follow : followerList) {
+            User follower = follow.getFollowerUser();
+            UserContentResponseDto responseDto = UserContentResponseDto.of
+                    (UserResponseDto.of(follower), isFollowed(follow.getId(), userId));
+            responseList.add(responseDto);
+        }
+        return responseList;
+    }
+
+    public List<UserContentResponseDto> getFollowList(Long userId) {
+        List<Follow> followList = followRepository.findByFollowerUserId(userId);
+        List<UserContentResponseDto> responseList = new ArrayList<>();
+        for (Follow follow : followList) {
+            User followUser = follow.getFollowUser();
+            UserContentResponseDto responseDto = UserContentResponseDto.of
+                    (UserResponseDto.of(followUser), true);
+            responseList.add(responseDto);
+        }
+        return responseList;
+    }
+
+    public boolean isFollowed(Long followUserId, Long followerUserId){
+        Follow follow = followRepository.findByFollowUserIdAndFollowerUserId(followUserId, followerUserId)
+                .orElse(null);
+        if(follow != null){
+            return true;
+        }
+        return false;
+    }
+}

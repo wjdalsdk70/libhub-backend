@@ -1,5 +1,6 @@
 package se.libraryhub.user.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.user.domain.User;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
 import se.libraryhub.user.domain.dto.response.UserLibraryResponseDto;
 import se.libraryhub.user.domain.dto.response.UserResponseDto;
 import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
@@ -26,6 +28,13 @@ public class UserController {
     @GetMapping("/info")
     public User goHome(){
         return getCurrentUser();
+    }
+
+    @Operation(summary = "다른 유저의 상세 정보 조회 + 팔로우하는 유저인지 확인 가능",
+            description = "기존 UserResponseDto 에서 isFollowed 필드가 추가됐습니다. 팔로우 중인 유저인지 확인 가능")
+    @GetMapping("/info/{userId}")
+    public UserContentResponseDto getAnotherUserInfo(@PathVariable("userId") Long userId){
+        return userService.getAnotherUserInfo(userId);
     }
 
     @GetMapping("/login")

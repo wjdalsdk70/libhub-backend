@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.service.FavoriteService;
+import se.libraryhub.folllow.service.FollowService;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
 import se.libraryhub.user.domain.dto.response.UserLibraryResponseDto;
+import se.libraryhub.user.domain.dto.response.UserResponseDto;
 import se.libraryhub.user.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class UserService{
 
     private final UserRepository userRepository;
     private final FavoriteService favoriteService;
+    private final FollowService followService;
 
     public User registerUser(String username, String email, String profileImageUrl, List<String> userLinks) {
         if(isExistingEmail(email)){
@@ -94,5 +98,14 @@ public class UserService{
         });
 
         return userLibraryResponseDtoList;
+    }
+
+    public UserContentResponseDto getAnotherUserInfo(Long userId) {
+        User anotherUser = getUserProfile(userId);
+        boolean isFollowed = followService.isFollowed(SecurityUtil.getCurrentUser().getId(), userId);
+        return UserContentResponseDto.builder()
+                .userResponseDto(UserResponseDto.of(anotherUser))
+                .isFollowed(isFollowed)
+                .build();
     }
 }

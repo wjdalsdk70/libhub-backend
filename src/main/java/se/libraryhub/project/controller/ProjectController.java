@@ -17,6 +17,9 @@ import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.project.service.ProjectService;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
+
+import java.util.List;
 
 import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
@@ -48,6 +51,13 @@ public class ProjectController {
         return projectService.getUserProjectList(getCurrentUser());
     }
 
+    @Operation(summary = "한 유저의 모든 공개 프로젝트 조회")
+    @GetMapping("/{anotherUserId}/page/{pageNumber}")
+    public ProjectResult getAllAnotherUserProjects(@PathVariable("anotherUserId") Long anotherUserId,
+                                                   @PathVariable int pageNumber){
+        return projectService.getAnotherUserProjectListPage(anotherUserId, pageNumber);
+    }
+
     @Operation(summary = "프로젝트 상세 내용 조회",
             description = "프로젝트 ID를 이용해 상세 내용 반환, 하위의 라이브러리들과 유저 정보 포함")
     @GetMapping("/{projectId}")
@@ -74,7 +84,8 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "최대 프로젝트 페이지 수를 넘는 요청을 했을 때 발생")
     })
     @GetMapping("/page/{pageNumber}")
-    public ProjectResult pagingProject(@PathVariable int pageNumber, @RequestParam PagingMode pagingMode){
+    public ProjectResult pagingProject(@PathVariable int pageNumber,
+                                       @RequestParam PagingMode pagingMode){
         return projectService.pagingProjects(pageNumber, pagingMode);
     }
 
@@ -84,8 +95,17 @@ public class ProjectController {
             @ApiResponse(responseCode = "400", description = "최대 프로젝트 페이지 수를 넘는 요청을 했을 때 발생")
     })
     @GetMapping("/mypage/{pageNumber}")
-    public ProjectResult pagingMyProject(@PathVariable int pageNumber, @RequestParam PagingMode pagingMode){
+    public ProjectResult pagingMyProject(@PathVariable int pageNumber,
+                                         @RequestParam PagingMode pagingMode){
         return projectService.pagingMyProjects(getCurrentUser(), pageNumber, pagingMode);
+    }
+
+    @Operation(summary = "자신이 팔로우하는 유저들(팔로잉)과 자신의 프로젝트 목록 페이지 조회",
+            description = "조회할 User 고유 ID는 현재 로그인한 유저의 정보입니다.")
+    @GetMapping("/dashboard/{pageNumber}")
+    public ProjectResult getFollowerAndMyProjects(@PathVariable int pageNumber,
+                                                                 @RequestParam PagingMode pagingMode){
+        return projectService.getFollowerAndMyProjects(getCurrentUser(), pageNumber, pagingMode);
     }
 
     @Operation(summary = "프로젝트 좋아요 누르기",

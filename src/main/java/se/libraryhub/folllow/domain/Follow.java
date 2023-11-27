@@ -1,12 +1,15 @@
 package se.libraryhub.folllow.domain;
 
 import lombok.*;
+import se.libraryhub.global.error.user.UserFollowException;
 import se.libraryhub.user.domain.User;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Follow {
 
@@ -15,7 +18,7 @@ public class Follow {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "followed_user_id")
+    @JoinColumn(name = "follow_user_id")
     private User followUser;
 
     @ManyToOne
@@ -24,7 +27,14 @@ public class Follow {
 
     @Builder
     public Follow(User followUser, User followerUser) {
+        validUser(followUser, followerUser);
         this.followUser = followUser;
         this.followerUser = followerUser;
+    }
+
+    private void validUser(User followUser, User followerUser){
+        if(Objects.equals(followUser, followerUser)){
+            throw new UserFollowException();
+        }
     }
 }

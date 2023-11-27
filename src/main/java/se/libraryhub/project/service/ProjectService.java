@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.favorite.service.FavoriteService;
+import se.libraryhub.folllow.service.FollowService;
 import se.libraryhub.global.error.project.ProjectNotFoundException;
 import se.libraryhub.global.error.project.ProjectPageException;
+import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
@@ -23,6 +25,8 @@ import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.User;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
+import se.libraryhub.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +40,9 @@ public class ProjectService{
     private final ProjectRepository projectRepository;
     private final HashtagRepository hashtagRepository;
     private final LibraryService libraryService;
+    private final UserRepository userRepository;
     private final FavoriteService favoriteService;
+    private final FollowService followService;
 
     public ProjectResponseDto postProject(ProjectContentRequestDto projectContentRequestDto, User user) {
         Project project = ProjectContentRequestDto.toEntity(projectContentRequestDto, user);
@@ -141,6 +147,34 @@ public class ProjectService{
             sortedDto = ProjectResponseDto.sortByFavorite(projectResponseDtos);
         }
         return getPage(sortedDto, pageNumber, PAGE);
+    }
+
+    public ProjectResult getFollowerAndMyProjects(User currentUser, int pageNumber, PagingMode pagingMode) {
+        List<UserContentResponseDto> userContentResponseDtos = followService.getFollowList(currentUser.getId());
+        List<ProjectResponseDto> followUserProjects = new ArrayList<>();
+        userContentResponseDtos.forEach(userContentResponseDto -> {
+            followUserProjects.addAll(
+                    getAnotherUserProjectList(userContentResponseDto.getUserResponseDto().getId()));
+        });
+        followUserProjects.addAll(getUserProjectList(currentUser).getProjectResult());
+        return pagingProjectsWithMode(followUserProjects, pageNumber, pagingMode);
+    }
+
+    public List<ProjectResponseDto> getAnotherUserProjectList(Long anotherUserId) {
+        List<Project> projects = projectRepository.findByUserIdAndIsPublic(anotherUserId, true);
+
+        return projects.stream().map(project -> {
+            List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
+                    .map(Hashtag::getContent).toList();
+            FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
+            return ProjectResponseDto.of(project, projectHashtags, userRepository.findUserById(anotherUserId)
+                    .orElseThrow(UserNotFoundException::new), favoriteResponseDto);
+        }).toList();
+    }
+
+    public ProjectResult getAnotherUserProjectListPage(Long anotherUserId, int pageNumber) {
+        List<ProjectResponseDto> projectResponseDtos = getAnotherUserProjectList(anotherUserId);
+        return getPage(projectResponseDtos, pageNumber, PAGE);
     }
 
     public static ProjectResult getPage(List<ProjectResponseDto> projectResponseDtos, int pageNumber, int pageSize) {

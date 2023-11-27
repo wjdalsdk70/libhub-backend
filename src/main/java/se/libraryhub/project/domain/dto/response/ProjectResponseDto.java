@@ -20,7 +20,8 @@ import java.util.List;
 @Schema(description = "프로젝트 미리보기")
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectResponseDto{
+public class
+ProjectResponseDto{
 
     private Long projectId;
 

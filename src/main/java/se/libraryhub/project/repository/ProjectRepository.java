@@ -19,4 +19,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAllByUser(User user);
 
     List<Project> findByIsPublicTrue();
+
+    List<Project> findByUserIdAndIsPublic(Long userId, boolean isPublic);
 }

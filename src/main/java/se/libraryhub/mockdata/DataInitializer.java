@@ -6,6 +6,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import se.libraryhub.favorite.domain.Favorite;
 import se.libraryhub.favorite.repository.FavoriteRepository;
+import se.libraryhub.folllow.domain.Follow;
+import se.libraryhub.folllow.repository.FollowRepository;
 import se.libraryhub.library.domain.Library;
 import se.libraryhub.library.repository.LibraryRepository;
 import se.libraryhub.library.service.LibraryService;
@@ -14,12 +16,15 @@ import se.libraryhub.librarycount.repository.LibraryCountRepository;
 import se.libraryhub.librarycount.service.LibraryCountService;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.repository.ProjectRepository;
+import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.user.domain.Role;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class DataInitializer implements ApplicationRunner {
     private final LibraryRepository libraryRepository;
     private final FavoriteRepository favoriteRepository;
     private final LibraryCountRepository libraryCountRepository;
+    private final FollowRepository followRepository;
 
     private List<User> users = new ArrayList<>();
     private List<Project> projects = new ArrayList<>();
@@ -40,6 +46,7 @@ public class DataInitializer implements ApplicationRunner {
         initProject();
         initLibrary();
         initFavorite();
+        initFollow();
     }
 
     public void initUser(){
@@ -134,5 +141,18 @@ public class DataInitializer implements ApplicationRunner {
             favoriteRepository.save(favorite);
             favoriteRepository.save(favorite2);
         }
+    }
+
+    public void initFollow(){
+        Follow follow1 = Follow.builder()
+                .followUser(users.get(0))
+                .followerUser(users.get(1))
+                .build();
+        Follow follow2 = Follow.builder()
+                .followUser(users.get(3))
+                .followerUser(users.get(1))
+                .build();
+        followRepository.save(follow1);
+        followRepository.save(follow2);
     }
 }
