@@ -3,6 +3,7 @@ package se.libraryhub.favorite.service;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.domain.Favorite;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.favorite.repository.FavoriteRepository;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class FavoriteService {
 

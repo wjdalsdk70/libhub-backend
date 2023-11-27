@@ -2,6 +2,7 @@ package se.libraryhub.hashtag.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.Library;
@@ -12,6 +13,7 @@ import se.libraryhub.project.repository.ProjectRepository;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class HashtagService {
 

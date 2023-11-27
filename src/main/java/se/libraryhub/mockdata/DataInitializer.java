@@ -8,6 +8,10 @@ import se.libraryhub.favorite.domain.Favorite;
 import se.libraryhub.favorite.repository.FavoriteRepository;
 import se.libraryhub.library.domain.Library;
 import se.libraryhub.library.repository.LibraryRepository;
+import se.libraryhub.library.service.LibraryService;
+import se.libraryhub.librarycount.domain.LibraryCount;
+import se.libraryhub.librarycount.repository.LibraryCountRepository;
+import se.libraryhub.librarycount.service.LibraryCountService;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.Role;
@@ -25,6 +29,7 @@ public class DataInitializer implements ApplicationRunner {
     private final ProjectRepository projectRepository;
     private final LibraryRepository libraryRepository;
     private final FavoriteRepository favoriteRepository;
+    private final LibraryCountRepository libraryCountRepository;
 
     private List<User> users = new ArrayList<>();
     private List<Project> projects = new ArrayList<>();
@@ -92,10 +97,22 @@ public class DataInitializer implements ApplicationRunner {
         for (int i = 0; i < 40; i++) {
             Library library = Library.builder()
                     .project(projects.get(i % projects.size()))
-                    .libraryname("lib" + i)
+                    .libraryname("lib" + i % 6)
                     .version("1.0.0")
                     .description("Sample Library for project " + (i % projects.size() + 1))
                     .build();
+
+            LibraryCount libraryCount = libraryCountRepository.findByLibraryname(library.getLibraryname())
+                    .orElse(null);
+            if(libraryCount != null){
+                libraryCount.incrementCount();
+                libraryCountRepository.save(libraryCount);
+            }else{
+                libraryCountRepository.save(LibraryCount.builder()
+                        .libraryname(library.getLibraryname())
+                        .count(1)
+                        .build());
+            }
             libraryRepository.save(library);
         }
     }

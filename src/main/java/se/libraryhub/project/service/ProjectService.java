@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.favorite.service.FavoriteService;
 import se.libraryhub.global.error.project.ProjectNotFoundException;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProjectService{
 
@@ -95,11 +97,11 @@ public class ProjectService{
         Project updatedProject = projectRepository.save(findProject);
 
         hashtagRepository.deleteAllByProject(updatedProject);
-        projectContentRequestDto.getProjectHashtags().stream().forEach(s -> {
+        projectContentRequestDto.getProjectHashtags().forEach(s -> {
             hashtagRepository.save(Hashtag.projectHashtag(updatedProject, s));
         });
         List<String> projectHashtags = hashtagRepository.findAllByProject(updatedProject).stream().map(
-                hashtag -> hashtag.getContent()
+                Hashtag::getContent
         ).toList();
 
         List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(updatedProject);

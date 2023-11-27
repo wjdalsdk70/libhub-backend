@@ -2,17 +2,22 @@ package se.libraryhub.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.service.FavoriteService;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
+import se.libraryhub.user.domain.dto.response.UserLibraryResponseDto;
 import se.libraryhub.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService{
 
@@ -70,5 +75,24 @@ public class UserService{
 
     public List<ProjectResponseDto> getFavoriteProjects() {
         return favoriteService.userFavoriteInfo();
+    }
+
+    public List<UserLibraryResponseDto> getUsedLibraries(Long userId){
+        List<UserLibraryResponseDto> userLibraryResponseDtoList = new ArrayList<>();
+
+        List<Object[]> libraries = userRepository.findFrequentlyUsedLibrariesGroupedByLibraryName(userId);
+        libraries.forEach(objects -> {
+            if (Objects.nonNull(objects) && objects.length == 2) {
+                String libraryName = (String) objects[0];
+                Long count = (Long) objects[1];
+
+                userLibraryResponseDtoList.add(UserLibraryResponseDto.builder()
+                        .libraryName(libraryName)
+                        .count(count.intValue())
+                        .build());
+            }
+        });
+
+        return userLibraryResponseDtoList;
     }
 }

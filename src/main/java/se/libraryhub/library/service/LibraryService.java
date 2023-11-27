@@ -2,6 +2,7 @@ package se.libraryhub.library.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.global.error.library.LibraryNotFoundException;
 import se.libraryhub.global.error.project.ProjectNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
@@ -11,6 +12,8 @@ import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.library.domain.dto.response.LibraryResponseDto;
 import se.libraryhub.library.repository.LibraryRepository;
+import se.libraryhub.librarycount.domain.LibraryCount;
+import se.libraryhub.librarycount.repository.LibraryCountRepository;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.repository.ProjectRepository;
 
@@ -18,12 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LibraryService {
 
     private final ProjectRepository projectRepository;
     private final LibraryRepository libraryRepository;
     private final HashtagRepository hashtagRepository;
+    private final LibraryCountRepository libraryCountRepository;
 
     public LibraryContentResponseDto getLibrary(Long libraryId) {
         Library library = libraryRepository.findLibraryByLibraryId(libraryId).orElseThrow(LibraryNotFoundException::new);
@@ -45,6 +50,19 @@ public class LibraryService {
         Project project = projectRepository.findProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
         Library library = LibraryContentRequestDto.toEntity(libraryContentRequestDto, project);
+
+        LibraryCount libraryCount = libraryCountRepository.findByLibraryname(libraryContentRequestDto.getLibraryname())
+                .orElse(null);
+        if(libraryCount != null){
+            libraryCount.incrementCount();
+            libraryCountRepository.save(libraryCount);
+        }else{
+            libraryCountRepository.save(LibraryCount.builder()
+                            .libraryname(libraryContentRequestDto.getLibraryname())
+                            .count(1)
+                            .build());
+        }
+
         return LibraryResponseDto.of(libraryRepository.save(library));
     }
 
@@ -68,7 +86,14 @@ public class LibraryService {
         Library findLibrary = libraryRepository.findLibraryByLibraryId(libraryId)
                 .orElseThrow(LibraryNotFoundException::new);
         List<Hashtag> hashtags = hashtagRepository.findAllByLibrary(findLibrary);
-//        hashtagRepository.deleteAll(hashtags);
+
+        LibraryCount libraryCount = libraryCountRepository.findByLibraryname(findLibrary.getLibraryname())
+                .orElse(null);
+        if(libraryCount != null){
+            libraryCount.decreaseCount();
+            libraryCountRepository.save(libraryCount);
+        }
+
         libraryRepository.delete(findLibrary);
     }
 }

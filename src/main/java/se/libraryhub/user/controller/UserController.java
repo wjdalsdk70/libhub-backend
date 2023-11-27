@@ -9,6 +9,7 @@ import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.user.domain.User;
+import se.libraryhub.user.domain.dto.response.UserLibraryResponseDto;
 import se.libraryhub.user.domain.dto.response.UserResponseDto;
 import se.libraryhub.user.domain.dto.request.UserUpdateRequestDto;
 import se.libraryhub.user.service.UserService;
@@ -63,5 +64,10 @@ public class UserController {
     @GetMapping("/favorites")
     public List<ProjectResponseDto> getFavoriteProjects(){
         return userService.getFavoriteProjects();
+    }
+
+    @GetMapping("/usedLibrary/{userId}")
+    public List<UserLibraryResponseDto> getUsedLibraries(@PathVariable Long userId){
+        return userService.getUsedLibraries(userId);
     }
 }
