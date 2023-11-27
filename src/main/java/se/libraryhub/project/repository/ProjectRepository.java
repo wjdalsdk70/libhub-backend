@@ -21,4 +21,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByIsPublicTrue();
 
     List<Project> findByUserIdAndIsPublic(Long userId, boolean isPublic);
+
+    @Query("SELECT DISTINCT p FROM Project p " +
+            "LEFT JOIN FETCH Hashtag h ON p = h.project " +
+            "WHERE (h.content LIKE %:content% OR p.projectname LIKE %:content%) " +
+            "AND p.isPublic = true")
+    List<Project> findProjectsByContent(@Param("content") String content);
 }

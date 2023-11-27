@@ -114,4 +114,13 @@ public class ProjectController {
     public void pressFavorite(@PathVariable Long projectId){
         projectService.pressFavorite(projectId);
     }
+
+    @Operation(summary = "프로젝트 검색",
+        description = "공개된 프로젝트들 중 프로젝트 이름과 프로젝트의 해시태그 내용을 포함해서 검색")
+    @GetMapping("/search/{pageNumber}")
+    public ProjectResult pagingSearchProject(@RequestParam(name="query") String searchQuery,
+                                             @PathVariable int pageNumber,
+                                             @RequestParam PagingMode pagingMode){
+        return projectService.searchProject(searchQuery, pageNumber, pagingMode);
+    }
 }

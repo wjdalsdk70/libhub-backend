@@ -1,10 +1,6 @@
 package se.libraryhub.project.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
@@ -60,12 +56,7 @@ public class ProjectService{
     public ProjectResult getProjectList(){
         List<Project> publicProjects = projectRepository.findByIsPublicTrue();
 
-        List<ProjectResponseDto> projectResponseDtos = publicProjects.stream().map((project -> {
-            List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
-                    .map(Hashtag::getContent).toList();
-            FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
-            return ProjectResponseDto.of(project, projectHashtags, project.getUser(), favoriteResponseDto);
-        })).toList();
+        List<ProjectResponseDto> projectResponseDtos = makeProjectListToDtos(publicProjects);
 
         int totalPage = projectResponseDtos.size() / PAGE;
 
@@ -75,12 +66,7 @@ public class ProjectService{
     public ProjectResult getUserProjectList(User user){
         List<Project> userProjects = projectRepository.findAllByUser(user);
 
-        List<ProjectResponseDto> projectResponseDtos = userProjects.stream().map((project -> {
-            List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
-                    .map(Hashtag::getContent).toList();
-            FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
-            return ProjectResponseDto.of(project, projectHashtags, user, favoriteResponseDto);
-        })).toList();
+        List<ProjectResponseDto> projectResponseDtos = makeProjectListToDtos(userProjects);
 
         int totalPage = projectResponseDtos.size() / PAGE;
 
@@ -179,6 +165,9 @@ public class ProjectService{
 
     public static ProjectResult getPage(List<ProjectResponseDto> projectResponseDtos, int pageNumber, int pageSize) {
         int totalItems = projectResponseDtos.size();
+        if(totalItems == 0){
+            return new ProjectResult(projectResponseDtos, 0);
+        }
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
         if (pageNumber < 1 || pageNumber > totalPages) {
@@ -192,5 +181,20 @@ public class ProjectService{
                 .projectResult(projectResponseDtos.subList(startIndex, endIndex))
                 .totalPage(totalPages)
                 .build();
+    }
+
+    public ProjectResult searchProject(String searchQuery, int pageNumber, PagingMode pagingMode) {
+        List<Project> searchResults = projectRepository.findProjectsByContent(searchQuery);
+        List<ProjectResponseDto> projectResponseDtos = makeProjectListToDtos(searchResults);
+        return pagingProjectsWithMode(projectResponseDtos, pageNumber, pagingMode);
+    }
+
+    public List<ProjectResponseDto> makeProjectListToDtos(List<Project> projects){
+        return projects.stream().map((project -> {
+            List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
+                    .map(Hashtag::getContent).toList();
+            FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
+            return ProjectResponseDto.of(project, projectHashtags, project.getUser(), favoriteResponseDto);
+        })).toList();
     }
 }
