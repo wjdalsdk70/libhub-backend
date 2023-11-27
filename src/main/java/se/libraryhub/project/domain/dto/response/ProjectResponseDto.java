@@ -12,6 +12,7 @@ import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.response.UserResponseDto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -66,14 +67,16 @@ public class ProjectResponseDto{
     }
 
 
-    public static void sortByFavorite(List<ProjectResponseDto> projectResponseDtos) {
-        Collections.sort(projectResponseDtos,
-                Comparator.comparingInt((ProjectResponseDto projectResponseDto) ->
-                        projectResponseDto.getFavoriteResponseDto().getFavoriteCount()).reversed());
+    public static List<ProjectResponseDto> sortByFavorite(List<ProjectResponseDto> projectResponseDtos) {
+        List<ProjectResponseDto> sortedList = new ArrayList<>(projectResponseDtos);
+        sortedList.sort(Comparator.comparingInt((ProjectResponseDto projectResponseDto) ->
+                projectResponseDto.getFavoriteResponseDto().getFavoriteCount()).reversed());
+        return sortedList;
     }
 
-    public static void sortByCreateDate(List<ProjectResponseDto> projectResponseDtos) {
-        Collections.sort(projectResponseDtos,
-                Comparator.comparing(ProjectResponseDto::getCreatedDate).reversed());
+    public static List<ProjectResponseDto> sortByCreatedDateDesc(List<ProjectResponseDto> projectResponseDtos) {
+        List<ProjectResponseDto> sortedList = new ArrayList<>(projectResponseDtos);
+        sortedList.sort(Comparator.comparing(ProjectResponseDto::getCreatedDate).reversed());
+        return sortedList;
     }
 }

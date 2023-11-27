@@ -23,6 +23,6 @@ public class FavoriteResponseDto implements Comparable<FavoriteResponseDto>{
 
     @Override
     public int compareTo(FavoriteResponseDto o) {
-        return o.getFavoriteCount();
+        return Integer.compare(o.favoriteCount, this.favoriteCount);
     }
 }

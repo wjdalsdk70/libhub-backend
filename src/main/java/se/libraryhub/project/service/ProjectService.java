@@ -23,6 +23,7 @@ import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -116,14 +117,12 @@ public class ProjectService{
 
     public ProjectResult pagingProjects(int pageNumber, PagingMode pagingMode){
         ProjectResult projectList = getProjectList();
-        pagingProjectsWithMode(projectList.getProjectResult(), pageNumber, pagingMode);
-        return projectList;
+        return pagingProjectsWithMode(projectList.getProjectResult(), pageNumber, pagingMode);
     }
 
     public ProjectResult pagingMyProjects(User user, int pageNumber, PagingMode pagingMode) {
         ProjectResult projectList = getUserProjectList(user);
-        pagingProjectsWithMode(projectList.getProjectResult(), pageNumber, pagingMode);
-        return projectList;
+        return pagingProjectsWithMode(projectList.getProjectResult(), pageNumber, pagingMode);
     }
 
     public void pressFavorite(Long projectId) {
@@ -131,17 +130,18 @@ public class ProjectService{
                 .orElseThrow(ProjectNotFoundException::new));
     }
 
-    private List<ProjectResponseDto> pagingProjectsWithMode(List<ProjectResponseDto> projectResponseDtos, int pageNumber, PagingMode pagingMode){
+    private ProjectResult pagingProjectsWithMode(List<ProjectResponseDto> projectResponseDtos, int pageNumber, PagingMode pagingMode){
+        List<ProjectResponseDto> sortedDto = new ArrayList<>();
         if(pagingMode.equals(PagingMode.LATEST)){
-            ProjectResponseDto.sortByCreateDate(projectResponseDtos);
+            sortedDto = ProjectResponseDto.sortByCreatedDateDesc(projectResponseDtos);
         }
         if(pagingMode.equals(PagingMode.POPULAR)){
-            ProjectResponseDto.sortByFavorite(projectResponseDtos);
+            sortedDto = ProjectResponseDto.sortByFavorite(projectResponseDtos);
         }
-        return getPage(projectResponseDtos, pageNumber, PAGE);
+        return getPage(sortedDto, pageNumber, PAGE);
     }
 
-    public static List<ProjectResponseDto> getPage(List<ProjectResponseDto> projectResponseDtos, int pageNumber, int pageSize) {
+    public static ProjectResult getPage(List<ProjectResponseDto> projectResponseDtos, int pageNumber, int pageSize) {
         int totalItems = projectResponseDtos.size();
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
@@ -152,6 +152,9 @@ public class ProjectService{
         int startIndex = (pageNumber - 1) * pageSize;
         int endIndex = Math.min(startIndex + pageSize, totalItems);
 
-        return projectResponseDtos.subList(startIndex, endIndex);
+        return ProjectResult.builder()
+                .projectResult(projectResponseDtos.subList(startIndex, endIndex))
+                .totalPage(totalPages)
+                .build();
     }
 }

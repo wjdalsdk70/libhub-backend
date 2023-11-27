@@ -85,7 +85,7 @@ public class ProjectController {
     })
     @GetMapping("/mypage/{pageNumber}")
     public ProjectResult pagingMyProject(@PathVariable int pageNumber, @RequestParam PagingMode pagingMode){
-        return projectService.pagingMyProjects(getCurrentUser(), pageNumber);
+        return projectService.pagingMyProjects(getCurrentUser(), pageNumber, pagingMode);
     }
 
     @Operation(summary = "프로젝트 좋아요 누르기",

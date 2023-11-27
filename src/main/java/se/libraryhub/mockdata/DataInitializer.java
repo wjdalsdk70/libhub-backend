@@ -108,9 +108,14 @@ public class DataInitializer implements ApplicationRunner {
         for(int i = 0; i < projects.size(); i++){
             Favorite favorite = Favorite.builder()
                     .user(users.get(i % users.size()))
-                    .project(projects.get(i))
+                    .project(projects.get(i % projects.size()))
+                    .build();
+            Favorite favorite2 = Favorite.builder()
+                    .user(users.get(i % users.size()))
+                    .project(projects.get((i+5) % projects.size()))
                     .build();
             favoriteRepository.save(favorite);
+            favoriteRepository.save(favorite2);
         }
     }
 }
