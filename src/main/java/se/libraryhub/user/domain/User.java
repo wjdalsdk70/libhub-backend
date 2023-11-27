@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity {
 
     @Id
@@ -24,7 +25,7 @@ public class User extends BaseTimeEntity {
 
     private String profileImageUrl;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> userLinks;
 
     @Enumerated(EnumType.STRING)
@@ -36,9 +37,6 @@ public class User extends BaseTimeEntity {
         this.email = email;
         this.profileImageUrl = profileImageUrl;
         this.userLinks = userLinks;
-    }
-
-    public User() {
     }
 
     public void updateUser(String username, String profileImageUrl, List<String> userLinks){

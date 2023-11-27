@@ -54,21 +54,25 @@ public class DataInitializer implements ApplicationRunner {
                 .email("user1@gmail.com")
                 .profileImageUrl("url1")
                 .username("kim")
+                .userLinks(List.of("userLink1","userLink2"))
                 .build();
         User user2 = User.builder()
                 .email("user2@ajou.ac.kr")
                 .profileImageUrl("url2")
                 .username("dong")
+                .userLinks(List.of("userLink3","userLink4"))
                 .build();
         User user3 = User.builder()
                 .email("user3@ajou.ac.kr")
                 .profileImageUrl("url3")
                 .username("hyun")
+                .userLinks(List.of("userLink5","userLink6"))
                 .build();
         User user4 = User.builder()
                 .email("user4@gmail.com")
                 .profileImageUrl("url4")
                 .username("ajou")
+                .userLinks(List.of("userLink7"))
                 .build();
 
         users.add(userRepository.save(user1));

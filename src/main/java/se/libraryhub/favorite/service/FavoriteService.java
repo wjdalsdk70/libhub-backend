@@ -9,13 +9,17 @@ import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.favorite.repository.FavoriteRepository;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
+import se.libraryhub.project.domain.PagingMode;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectResult;
+import se.libraryhub.project.service.ProjectService;
 import se.libraryhub.user.domain.Role;
 import se.libraryhub.user.domain.User;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
@@ -37,14 +41,21 @@ public class FavoriteService {
                 .build();
     }
 
-    public List<ProjectResponseDto> userFavoriteInfo() {
+    public ProjectResult userFavoriteInfo(int pageNumber, PagingMode pagingMode) {
         List<Favorite> favoriteList = favoriteRepository.findAllByUser(getCurrentUser());
-        return favoriteList.stream().map(favorite -> {
+
+        List<ProjectResponseDto> favoriteProjects = favoriteList.stream().map(favorite -> {
             Project favoriteProject = favorite.getProject();
+            if(!favoriteProject.getIsPublic()){
+                return null;
+            }
             List<Hashtag> hashtags = hashtagRepository.findAllByProject(favoriteProject);
             List<String> hashtagContents = hashtags.stream().map(Hashtag::getContent).toList();
             return ProjectResponseDto.of(favoriteProject, hashtagContents, favoriteProject.getUser(),projectFavoriteInfo(favoriteProject));
-        }).toList();
+        }).filter(Objects::nonNull)
+          .toList();
+
+        return ProjectService.pagingProjectsWithMode(favoriteProjects, pageNumber, pagingMode);
     }
 
     public void pressFavorite(Project project) {

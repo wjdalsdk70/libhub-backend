@@ -41,6 +41,7 @@ public class ProjectService{
     private final FollowService followService;
 
     public ProjectResponseDto postProject(ProjectContentRequestDto projectContentRequestDto, User user) {
+        user = userRepository.findUserById(user.getId()).orElseThrow(UserNotFoundException::new);
         Project project = ProjectContentRequestDto.toEntity(projectContentRequestDto, user);
         Project postedProject = projectRepository.save(project);
 
@@ -124,7 +125,7 @@ public class ProjectService{
                 .orElseThrow(ProjectNotFoundException::new));
     }
 
-    private ProjectResult pagingProjectsWithMode(List<ProjectResponseDto> projectResponseDtos, int pageNumber, PagingMode pagingMode){
+    public static ProjectResult pagingProjectsWithMode(List<ProjectResponseDto> projectResponseDtos, int pageNumber, PagingMode pagingMode){
         List<ProjectResponseDto> sortedDto = new ArrayList<>();
         if(pagingMode.equals(PagingMode.LATEST)){
             sortedDto = ProjectResponseDto.sortByCreatedDateDesc(projectResponseDtos);

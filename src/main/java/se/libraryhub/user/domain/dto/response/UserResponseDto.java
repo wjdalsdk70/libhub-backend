@@ -5,6 +5,7 @@ import se.libraryhub.user.domain.Role;
 import se.libraryhub.user.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +19,8 @@ public class UserResponseDto {
 
     private String profileImageUrl;
 
+    private List<String> userLinks;
+
     private Role role;
 
     private LocalDateTime createDate;
@@ -25,7 +28,9 @@ public class UserResponseDto {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public UserResponseDto(Long id, String username, String email, String profileImageUrl, Role role, LocalDateTime createDate, LocalDateTime modifiedDate) {
+    public UserResponseDto(Long id, String username, String email, String profileImageUrl,
+                           Role role, LocalDateTime createDate, LocalDateTime modifiedDate,
+                           List<String> userLinks) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -33,6 +38,7 @@ public class UserResponseDto {
         this.role = role;
         this.createDate = createDate;
         this.modifiedDate = modifiedDate;
+        this.userLinks = userLinks;
     }
 
     public static UserResponseDto of(User user){
@@ -44,6 +50,7 @@ public class UserResponseDto {
                 .role(user.getRole())
                 .createDate(user.getCreateDate())
                 .modifiedDate(user.getModifiedDate())
+                .userLinks(user.getUserLinks())
                 .build();
     }
 

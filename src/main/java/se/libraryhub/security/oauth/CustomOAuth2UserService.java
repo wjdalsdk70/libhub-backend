@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.service.UserService;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 @Service
@@ -35,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User saveIfNotExist(OAuth2UserInfo oAuth2UserInfo) {
         if (!userService.isExistingEmail(oAuth2UserInfo.getEmail())) {
             return userService.registerUser(oAuth2UserInfo.getName(), oAuth2UserInfo.getEmail(),
-                    oAuth2UserInfo.getPicture(), null);
+                    oAuth2UserInfo.getPicture(), new ArrayList<>());
         }
         return userService.findUserByEmail(oAuth2UserInfo.getEmail());
     }

@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.service.FavoriteService;
 import se.libraryhub.folllow.service.FollowService;
+import se.libraryhub.project.domain.PagingMode;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
+import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.user.domain.User;
@@ -77,8 +79,8 @@ public class UserService{
         return userRepository.searchAllByUsername(username);
     }
 
-    public List<ProjectResponseDto> getFavoriteProjects() {
-        return favoriteService.userFavoriteInfo();
+    public ProjectResult getFavoriteProjects(int pageNumber, PagingMode pagingMode) {
+        return favoriteService.userFavoriteInfo(pageNumber, pagingMode);
     }
 
     public List<UserLibraryResponseDto> getUsedLibraries(Long userId){

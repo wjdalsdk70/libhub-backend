@@ -30,7 +30,7 @@ public class Project extends BaseTimeEntity {
 
     private String description;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> projectLinks;
 
     private Boolean isPublic;
