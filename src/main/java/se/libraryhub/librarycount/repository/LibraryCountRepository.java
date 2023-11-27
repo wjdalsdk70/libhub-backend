@@ -13,5 +13,7 @@ public interface LibraryCountRepository extends JpaRepository<LibraryCount, Long
 
     Optional<LibraryCount> findByLibraryname(String libraryName);
 
-    List<LibraryCount> findTop5ByOrderByCountDesc();
+    List<LibraryCount> findTop10ByOrderByCountDesc();
+
+    List<LibraryCount> findAllByOrderByCountDesc();
 }

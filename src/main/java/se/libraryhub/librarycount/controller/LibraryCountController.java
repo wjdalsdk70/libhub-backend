@@ -17,8 +17,13 @@ public class LibraryCountController {
 
     private final LibraryCountService libraryCountService;
 
-    @GetMapping("")
-    public List<LibraryCount> getTopNLibraryCount(){
-        return libraryCountService.getTop5LibraryCountsOrderedByCount();
+    @GetMapping("{topN}")
+    public List<LibraryCount> getTopNLibraryCount(@PathVariable int topN){
+        return libraryCountService.getAllLibraryCountsOrderedByCount(topN);
+    }
+
+    @GetMapping("top10")
+    public List<LibraryCount> getTop10LibraryCount(){
+        return libraryCountService.getTop10LibraryCountsOrderedByCount();
     }
 }

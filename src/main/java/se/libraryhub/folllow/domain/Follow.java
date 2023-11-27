@@ -1,21 +1,30 @@
 package se.libraryhub.folllow.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import se.libraryhub.user.domain.User;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Follow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    Long followUserId;
+    @ManyToOne
+    @JoinColumn(name = "followed_user_id")
+    private User followUser;
 
-    Long followerUserId;
+    @ManyToOne
+    @JoinColumn(name = "follower_user_id")
+    private User followerUser;
+
+    @Builder
+    public Follow(User followUser, User followerUser) {
+        this.followUser = followUser;
+        this.followerUser = followerUser;
+    }
 }

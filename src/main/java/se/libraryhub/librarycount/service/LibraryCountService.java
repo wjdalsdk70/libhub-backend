@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.libraryhub.global.error.library.LibraryCountIndexError;
 import se.libraryhub.librarycount.domain.LibraryCount;
 import se.libraryhub.librarycount.repository.LibraryCountRepository;
 
@@ -18,7 +19,16 @@ public class LibraryCountService {
 
     private final LibraryCountRepository libraryCountRepository;
 
-    public List<LibraryCount> getTop5LibraryCountsOrderedByCount() {
-        return libraryCountRepository.findTop5ByOrderByCountDesc();
+    public List<LibraryCount> getTop10LibraryCountsOrderedByCount() {
+        return libraryCountRepository.findTop10ByOrderByCountDesc();
+    }
+
+    public List<LibraryCount> getAllLibraryCountsOrderedByCount(int topN) {
+        List<LibraryCount> libraryCounts = libraryCountRepository.findAllByOrderByCountDesc();
+        try{
+            return libraryCounts.subList(0, topN);
+        }catch(IndexOutOfBoundsException ie){
+            throw new LibraryCountIndexError();
+        }
     }
 }

@@ -24,7 +24,7 @@ public class LibraryController {
 
     @Operation(summary = "프로젝트에 라이브러리 정보 추가")
     @PostMapping("/{projectId}/libraries")
-    public LibraryResponseDto addLibrary(@PathVariable Long projectId, @RequestBody LibraryContentRequestDto libraryContentRequestDto){
+    public LibraryContentResponseDto addLibrary(@PathVariable Long projectId, @RequestBody LibraryContentRequestDto libraryContentRequestDto){
         return libraryService.addLibrary(projectId, libraryContentRequestDto);
     }
 

@@ -15,6 +15,7 @@ import se.libraryhub.library.repository.LibraryRepository;
 import se.libraryhub.librarycount.domain.LibraryCount;
 import se.libraryhub.librarycount.repository.LibraryCountRepository;
 import se.libraryhub.project.domain.Project;
+import se.libraryhub.project.domain.dto.response.ProjectContentResponseDto;
 import se.libraryhub.project.repository.ProjectRepository;
 
 import java.util.ArrayList;
@@ -46,10 +47,16 @@ public class LibraryService {
         return libraryContentResponseDtos;
     }
 
-    public LibraryResponseDto addLibrary(Long projectId, LibraryContentRequestDto libraryContentRequestDto) {
+    public LibraryContentResponseDto addLibrary(Long projectId, LibraryContentRequestDto libraryContentRequestDto) {
         Project project = projectRepository.findProjectByProjectId(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
         Library library = LibraryContentRequestDto.toEntity(libraryContentRequestDto, project);
+        Library savedLibrary = libraryRepository.save(library);
+
+        List<String> libraryHashtags = libraryContentRequestDto.getLibraryHashtags();
+        libraryHashtags.forEach((hashtag) -> {
+            hashtagRepository.save(Hashtag.libraryHashtag(savedLibrary, hashtag));
+        });
 
         LibraryCount libraryCount = libraryCountRepository.findByLibraryname(libraryContentRequestDto.getLibraryname())
                 .orElse(null);
@@ -63,21 +70,20 @@ public class LibraryService {
                             .build());
         }
 
-        return LibraryResponseDto.of(libraryRepository.save(library));
+        return getLibrary(savedLibrary.getLibraryId());
     }
 
     public LibraryContentResponseDto updateLibrary(Long libraryId, LibraryContentRequestDto libraryContentRequestDto){
         Library findLibrary = libraryRepository.findLibraryByLibraryId(libraryId)
                 .orElseThrow(LibraryNotFoundException::new);
-        findLibrary.updateLibrary(libraryContentRequestDto);
-
-//        TODO: library 안에 hashtag들은 id를 가지고 있는 것이 이상한 것 같다. 하지만 update나 delete 할려면
-//        id가 필요... -> 라이브러리 관련 모든 hashtag를 delete하고 다시 업로드하자 (좋은 방법 생각하기)
         List<Hashtag> findAllLibraryHashtags = hashtagRepository.findAllByLibrary(findLibrary);
         hashtagRepository.deleteAll(findAllLibraryHashtags);
+
+        findLibrary.updateLibrary(libraryContentRequestDto);
+        Library updatedLibrary = libraryRepository.save(findLibrary);
         List<String> libraryHashtags = libraryContentRequestDto.getLibraryHashtags();
         libraryHashtags.forEach((hashtag) -> {
-            hashtagRepository.save(Hashtag.libraryHashtag(findLibrary, hashtag));
+            hashtagRepository.save(Hashtag.libraryHashtag(updatedLibrary, hashtag));
         });
         return LibraryContentResponseDto.of(libraryRepository.save(findLibrary), libraryHashtags);
     }

@@ -15,8 +15,6 @@ public class LibraryResponseDto {
 
     private Long libraryId;
 
-    private ProjectContentResponseDto projectContentResponseDto;
-
     private String description;
 
     private String libraryname;
@@ -28,12 +26,11 @@ public class LibraryResponseDto {
     private LocalDateTime modifiedDate;
 
     @Builder
-    public LibraryResponseDto(Long libraryId, ProjectContentResponseDto projectContentResponseDto, String libraryname,
+    public LibraryResponseDto(Long libraryId, String libraryname,
                               String version,
                               LocalDateTime createDate, LocalDateTime modifiedDate,
                               String description) {
         this.libraryId = libraryId;
-        this.projectContentResponseDto = projectContentResponseDto;
         this.libraryname = libraryname;
         this.version = version;
         this.createDate = createDate;
