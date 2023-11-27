@@ -22,8 +22,8 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
-    public boolean followingUser(Long followUserId, Long followerUserId) {
-        Follow follow = followRepository.findByFollowUserIdAndFollowerUserId(followUserId, followerUserId)
+    public boolean followingUser(Long myId, Long followUserId) {
+        Follow follow = followRepository.findByFollowUserIdAndFollowerUserId(followUserId, myId)
                 .orElse(null);
         if (follow != null) {
             followRepository.delete(follow);
@@ -31,7 +31,7 @@ public class FollowService {
         } else {
             follow = Follow.builder()
                     .followUser(userRepository.findUserById(followUserId).orElseThrow(UserNotFoundException::new))
-                    .followerUser(userRepository.findUserById(followerUserId).orElseThrow(UserNotFoundException::new))
+                    .followerUser(userRepository.findUserById(myId).orElseThrow(UserNotFoundException::new))
                     .build();
             followRepository.save(follow);
             return true;

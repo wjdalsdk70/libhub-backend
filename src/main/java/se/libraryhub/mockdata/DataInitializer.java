@@ -152,7 +152,12 @@ public class DataInitializer implements ApplicationRunner {
                 .followUser(users.get(3))
                 .followerUser(users.get(1))
                 .build();
+        Follow follow3 = Follow.builder()
+                .followUser(users.get(1))
+                .followerUser(users.get(0))
+                .build();
         followRepository.save(follow1);
         followRepository.save(follow2);
+        followRepository.save(follow3);
     }
 }

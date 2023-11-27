@@ -21,8 +21,8 @@ public class FollowController {
 
     @Operation(summary = "유저를 팔로우 또는 언팔로우",
             description = "쿼리 파라미터로 팔로우 또는 팔로잉 할 유저 ID를 넣으면 됩니다")
-    @PostMapping("/follow")
-    public boolean followingUser(Long followUserId){
+    @PostMapping("/{followUserId}")
+    public boolean followingUser(@PathVariable Long followUserId){
         return followService.followingUser(getCurrentUser().getId(), followUserId);
     }
 
