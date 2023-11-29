@@ -123,4 +123,13 @@ public class ProjectController {
                                              @RequestParam PagingMode pagingMode){
         return projectService.searchProject(searchQuery, pageNumber, pagingMode);
     }
+
+    @Operation(summary = "라이브러리까지 검색 후 페이징",
+        description = "프로젝트, 프로젝트의 해시태그, 라이브러리를 검색한 후 중복 없는 퍼블릭 프로젝트 페이징 반환")
+    @GetMapping("/libraries/search/{pageNumber}")
+    public ProjectResult pagingSearchLibraries(@RequestParam(name="query") String searchQuery,
+                                               @PathVariable int pageNumber,
+                                               @RequestParam PagingMode pagingMode){
+        return projectService.searchLibraries(searchQuery, pageNumber, pagingMode);
+    }
 }

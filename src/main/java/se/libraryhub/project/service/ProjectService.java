@@ -12,6 +12,7 @@ import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
+import se.libraryhub.library.repository.LibraryRepository;
 import se.libraryhub.library.service.LibraryService;
 import se.libraryhub.project.domain.PagingMode;
 import se.libraryhub.project.domain.Project;
@@ -36,6 +37,7 @@ public class ProjectService{
     private final ProjectRepository projectRepository;
     private final HashtagRepository hashtagRepository;
     private final LibraryService libraryService;
+    private final LibraryRepository libraryRepository;
     private final UserRepository userRepository;
     private final FavoriteService favoriteService;
     private final FollowService followService;
@@ -190,6 +192,12 @@ public class ProjectService{
         return pagingProjectsWithMode(projectResponseDtos, pageNumber, pagingMode);
     }
 
+    public ProjectResult searchLibraries(String searchQuery, int pageNumber, PagingMode pagingMode) {
+        List<Project> searchResults = libraryRepository.findProjectsByLibrarynameContent(searchQuery);
+        List<ProjectResponseDto> projectResponseDtos = makeProjectListToDtos(searchResults);
+        return pagingProjectsWithMode(projectResponseDtos, pageNumber, pagingMode);
+    }
+
     public List<ProjectResponseDto> makeProjectListToDtos(List<Project> projects){
         return projects.stream().map((project -> {
             List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
@@ -198,4 +206,5 @@ public class ProjectService{
             return ProjectResponseDto.of(project, projectHashtags, project.getUser(), favoriteResponseDto);
         })).toList();
     }
+
 }
