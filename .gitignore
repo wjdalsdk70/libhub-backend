@@ -4,6 +4,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+application.properties
+application-aws.properties
+application-dev.properties
+application-local.properties
 
 ### STS ###
 .apt_generated
@@ -18,8 +22,6 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-application-oauth.properties
-application-aws.properties
 .idea
 *.iws
 *.iml
