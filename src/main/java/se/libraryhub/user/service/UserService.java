@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.service.FavoriteService;
 import se.libraryhub.folllow.service.FollowService;
+import se.libraryhub.global.error.user.UserEmailExistException;
 import se.libraryhub.project.domain.PagingMode;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResult;
@@ -32,7 +33,7 @@ public class UserService{
 
     public User registerUser(String username, String email, String profileImageUrl, List<String> userLinks) {
         if(isExistingEmail(email)){
-            throw new UserNotFoundException();
+            throw new UserEmailExistException();
         }
         return userRepository.save(new User(username, email, profileImageUrl, userLinks));
     }
@@ -76,7 +77,7 @@ public class UserService{
     }
 
     public List<User> searchUserByUsername(String username) {
-        return userRepository.searchAllByUsername(username);
+        return userRepository.findAllByUsernameContaining(username);
     }
 
     public ProjectResult getFavoriteProjects(int pageNumber, PagingMode pagingMode) {

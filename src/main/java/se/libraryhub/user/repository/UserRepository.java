@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserById(Long id);
 
-    List<User> searchAllByUsername(String username);
+    List<User> findAllByUsernameContaining(String username);
 
     // 사용자가 자주 사용하는 라이브러리 그룹화 및 카운트 조회
     @Query("SELECT l.libraryname, COUNT(l) " +
