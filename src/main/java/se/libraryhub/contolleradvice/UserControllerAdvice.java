@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import se.libraryhub.global.error.user.UnauthorizedAccessException;
 import se.libraryhub.global.error.user.UserFollowException;
 import se.libraryhub.global.error.user.UserNotFoundException;
+import se.libraryhub.global.error.user.UserNotOwnerException;
 
 @RestControllerAdvice
 public class UserControllerAdvice {
@@ -28,5 +29,11 @@ public class UserControllerAdvice {
     @ResponseBody
     public ResponseEntity<?> handleUserFollowException(UserFollowException userFollowException){
         return new ResponseEntity<>(userFollowException.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserNotOwnerException.class)
+    @ResponseBody
+    public ResponseEntity<?> handleUserNowOwnerException(UserNotOwnerException userNotOwnerException){
+        return new ResponseEntity<>(userNotOwnerException.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }

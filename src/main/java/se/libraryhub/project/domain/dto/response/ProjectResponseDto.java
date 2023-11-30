@@ -9,6 +9,7 @@ import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.User;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
 import se.libraryhub.user.domain.dto.response.UserResponseDto;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ ProjectResponseDto{
 
     private Long projectId;
 
-    private UserResponseDto userResponseDto;
+    private UserContentResponseDto userContentResponseDto;
 
     private String projectname;
 
@@ -40,11 +41,11 @@ ProjectResponseDto{
     private LocalDateTime createdDate;
 
     @Builder
-    public ProjectResponseDto(Long projectId, UserResponseDto userResponseDto, String projectname,
+    public ProjectResponseDto(Long projectId, UserContentResponseDto userContentResponseDto, String projectname,
                               List<String> projectHashtags, Boolean isPublic, String description,
                               FavoriteResponseDto favoriteResponseDto, LocalDateTime createdDate) {
         this.projectId = projectId;
-        this.userResponseDto = userResponseDto;
+        this.userContentResponseDto = userContentResponseDto;
         this.description = description;
         this.projectname = projectname;
         this.projectHashtags = projectHashtags;
@@ -53,11 +54,11 @@ ProjectResponseDto{
         this.favoriteResponseDto = favoriteResponseDto;
     }
 
-    public static ProjectResponseDto of(Project project, List<String> projectHashtags, User user,
+    public static ProjectResponseDto of(Project project, List<String> projectHashtags, User user, boolean isFollowed,
                                         FavoriteResponseDto favoriteResponseDto){
         return ProjectResponseDto.builder()
                 .projectId(project.getProjectId())
-                .userResponseDto(UserResponseDto.of(user))
+                .userContentResponseDto(UserContentResponseDto.of(UserResponseDto.of(user), isFollowed))
                 .description(project.getDescription())
                 .projectname(project.getProjectname())
                 .projectHashtags(projectHashtags)
