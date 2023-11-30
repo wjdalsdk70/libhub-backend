@@ -105,7 +105,7 @@ public class UserService{
 
     public UserContentResponseDto getAnotherUserInfo(Long userId) {
         User anotherUser = getUserProfile(userId);
-        boolean isFollowed = followService.isFollowed(SecurityUtil.getCurrentUser().getId(), userId);
+        boolean isFollowed = followService.isFollowed(userId, SecurityUtil.getCurrentUser().getId());
         return UserContentResponseDto.builder()
                 .userResponseDto(UserResponseDto.of(anotherUser))
                 .isFollowed(isFollowed)

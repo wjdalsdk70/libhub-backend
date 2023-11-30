@@ -43,10 +43,10 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         initUser();
-//        initProject();
-//        initLibrary();
-//        initFavorite();
-//        initFollow();
+        initProject();
+        initLibrary();
+        initFavorite();
+        initFollow();
     }
 
     public void initUser(){
