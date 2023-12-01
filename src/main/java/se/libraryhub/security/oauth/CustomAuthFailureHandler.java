@@ -1,4 +1,4 @@
-package se.libraryhub.security.filter;
+package se.libraryhub.security.oauth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;

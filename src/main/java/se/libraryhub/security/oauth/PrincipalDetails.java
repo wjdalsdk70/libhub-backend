@@ -13,8 +13,11 @@ import java.util.Map;
 public class PrincipalDetails implements OAuth2User {
 
     private final User user;
-    private final Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
+    public PrincipalDetails(User user){
+        this.user = user;
+    }
     public PrincipalDetails(User user, Map<String, Object> attributes){
         this.user = user;
         this.attributes = attributes;

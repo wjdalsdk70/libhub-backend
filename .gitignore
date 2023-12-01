@@ -8,6 +8,7 @@ application.properties
 application-aws.properties
 application-dev.properties
 application-local.properties
+application-test.properties
 
 ### STS ###
 .apt_generated

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
@@ -27,10 +28,13 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "로그인",
-            description = "로그인 성공 시 200 OK 반환")
+            description = "로그인 누를 시 구글 페이지로 리다이렉트")
     @GetMapping("/login")
-    public ResponseEntity<?> login(){
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> login(OAuth2AuthenticationToken authenticationToken){
+        // 구글 로그인 페이지로 리다이렉트
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", "http://localhost:8080/oauth2/code/google")
+                .build();
     }
 
     @Operation(summary = "유저 정보 업데이트")
