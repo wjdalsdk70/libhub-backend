@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import se.libraryhub.security.filter.jwt.JwtAuthorizationFilter;
@@ -55,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITELIST = {
             // all
 //            "/**",
+            "/api/libraryCount/**",
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
@@ -66,9 +68,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // -- Swagger UI v3 (OpenAPI)
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            // other public endpoints of your API may be appended to this array
-            "/api/project/**",
-            "/api/library/**"
     };
 
     @Override
@@ -79,9 +78,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/user/**")
                 .hasAnyRole(Role.USER.name(),Role.GUEST.name(),Role.ADMIN.name())
                 .anyRequest().authenticated().and()
-                .cors(Customizer.withDefaults())
                 .apply(new MyCustomDsl()).and()
-                .formLogin().loginPage("http://localhost:3000/auth");
+                .cors(Customizer.withDefaults());
         http
                 .oauth2Login()
                 .userInfoEndpoint()
@@ -95,7 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http
-                    .addFilter(new JwtAuthorizationFilter(authenticationManager));
+                    .addFilterBefore(new JwtAuthorizationFilter(authenticationManager), BasicAuthenticationFilter.class);
         }
     }
 

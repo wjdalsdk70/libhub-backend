@@ -27,15 +27,15 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "로그인",
-            description = "로그인 누를 시 구글 페이지로 리다이렉트")
-    @GetMapping("/login")
-    public ResponseEntity<?> login(OAuth2AuthenticationToken authenticationToken){
-        // 구글 로그인 페이지로 리다이렉트
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", "http://localhost:8080/oauth2/code/google")
-                .build();
-    }
+//    @Operation(summary = "로그인",
+//            description = "로그인 누를 시 구글 페이지로 리다이렉트")
+//    @GetMapping("/login")
+//    public ResponseEntity<?> login(OAuth2AuthenticationToken authenticationToken){
+//        // 구글 로그인 페이지로 리다이렉트
+//        return ResponseEntity.status(HttpStatus.FOUND)
+//                .header("Location", "http://localhost:8080/oauth2/code/google")
+//                .build();
+//    }
 
     @Operation(summary = "유저 정보 업데이트")
     @PostMapping("/update")
