@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
 
 import se.libraryhub.project.domain.PagingMode;
-import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResult;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
@@ -79,5 +78,11 @@ public class UserController {
     @GetMapping("/usedLibrary/{userId}")
     public List<UserLibraryResponseDto> getUsedLibraries(@PathVariable Long userId){
         return userService.getUsedLibraries(userId);
+    }
+
+    @Operation(summary = "자신이 자주 사용하는 라이브러리 목록 조회")
+    @GetMapping("/usedLibrary/my")
+    public List<UserLibraryResponseDto> getMYUsedLibraries(){
+        return userService.getMyUsedLibraries(getCurrentUser().getId());
     }
 }

@@ -62,6 +62,7 @@ public class FollowService {
         return responseList;
     }
 
+    // followUserId -> 팔로우 눌리는 사람 , followerUserId -> 팔로우 누르는 사람
     public boolean isFollowed(Long followUserId, Long followerUserId){
         Follow follow = followRepository.findByFollowUserIdAndFollowerUserId(followUserId, followerUserId)
                 .orElse(null);

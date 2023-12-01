@@ -7,8 +7,10 @@ import se.libraryhub.favorite.service.FavoriteService;
 import se.libraryhub.folllow.service.FollowService;
 import se.libraryhub.global.error.user.UserEmailExistException;
 import se.libraryhub.project.domain.PagingMode;
+import se.libraryhub.project.domain.Project;
 import se.libraryhub.project.domain.dto.response.ProjectResponseDto;
 import se.libraryhub.project.domain.dto.response.ProjectResult;
+import se.libraryhub.project.service.ProjectService;
 import se.libraryhub.security.oauth.SecurityUtil;
 import se.libraryhub.global.error.user.UserNotFoundException;
 import se.libraryhub.user.domain.User;
@@ -30,6 +32,7 @@ public class UserService{
     private final UserRepository userRepository;
     private final FavoriteService favoriteService;
     private final FollowService followService;
+    private final ProjectService projectService;
 
     public User registerUser(String username, String email, String profileImageUrl, List<String> userLinks) {
         if(isExistingEmail(email)){
@@ -92,10 +95,12 @@ public class UserService{
             if (Objects.nonNull(objects) && objects.length == 2) {
                 String libraryName = (String) objects[0];
                 Long count = (Long) objects[1];
-
+                List<Project> usedProjects = userRepository.findUsedProjectsByUserLibrary(libraryName, userId);
                 userLibraryResponseDtoList.add(UserLibraryResponseDto.builder()
                         .libraryName(libraryName)
                         .count(count.intValue())
+//                        TODO: 프로젝트 DB 관련 로직이 아닌 것은 Utils로 뺴기
+                        .usedProjects(projectService.makeProjectListToDtos(usedProjects))
                         .build());
             }
         });
@@ -110,5 +115,26 @@ public class UserService{
                 .userResponseDto(UserResponseDto.of(anotherUser))
                 .isFollowed(isFollowed)
                 .build();
+    }
+
+    public List<UserLibraryResponseDto> getMyUsedLibraries(Long userId) {
+        List<UserLibraryResponseDto> userLibraryResponseDtoList = new ArrayList<>();
+
+        List<Object[]> libraries = userRepository.findMyFrequentlyUsedLibrariesGroupedByLibraryName(userId);
+        libraries.forEach(objects -> {
+            if (Objects.nonNull(objects) && objects.length == 2) {
+                String libraryName = (String) objects[0];
+                Long count = (Long) objects[1];
+                List<Project> usedProjects = userRepository.findMyUsedProjectsByUserLibrary(libraryName, userId);
+                userLibraryResponseDtoList.add(UserLibraryResponseDto.builder()
+                        .libraryName(libraryName)
+                        .count(count.intValue())
+//                        TODO: 프로젝트 DB 관련 로직이 아닌 것은 Utils로 뺴기
+                        .usedProjects(projectService.makeProjectListToDtos(usedProjects))
+                        .build());
+            }
+        });
+
+        return userLibraryResponseDtoList;
     }
 }
