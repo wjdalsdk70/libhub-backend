@@ -1,5 +1,6 @@
 package se.libraryhub.project.service;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.repository.FavoriteRepository;
 import se.libraryhub.folllow.repository.FollowRepository;
@@ -37,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ProjectServiceTest {
 
     @Autowired
@@ -73,15 +77,22 @@ class ProjectServiceTest {
     }
 
     @Test
+    void getProject(){
+        Project project = projectRepository.findProjectByProjectId(1L).orElse(null);
+        assertNotNull(project);
+    }
+
+    @Test
     void postProject() {
-        User currentUser = userService.findUserById(1L);
+        User currentUser = SecurityUtil.getCurrentUser();
         ProjectContentRequestDto projectContentRequestDto = new ProjectContentRequestDto(
-                "Sample Project", // 프로젝트 이름
-                Arrays.asList("http://samplelink1.com", "http://samplelink2.com"), // 프로젝트 링크
-                "This is a sample project for testing.", // 프로젝트 설명
-                true, // 공개 여부
-                Arrays.asList("sample", "project", "testing") // 프로젝트 해시태그
+                "Sample Project",
+                new ArrayList<>(Arrays.asList("http://samplelink1.com", "http://samplelink2.com")),
+                "This is a sample project for testing.",
+                true,
+                new ArrayList<>(Arrays.asList("sample", "project", "testing"))
         );
+
         ProjectResponseDto responseDto = projectService.postProject(projectContentRequestDto, currentUser);
 
         assertNotNull(responseDto);
@@ -101,23 +112,30 @@ class ProjectServiceTest {
         User currentUser = SecurityUtil.getCurrentUser();
         ProjectContentRequestDto projectContentRequestDto = new ProjectContentRequestDto(
                 "Updated Project",
-                Arrays.asList("http://updatedlink1.com", "http://updatedlink2.com"),
-                "This is an updated project for testing.",
-                false,
-                Arrays.asList("updated", "project", "testing")
+                new ArrayList<>(Arrays.asList("http://samplelink1.com", "http://samplelink2.com")),
+                "This is a sample project for testing.",
+                true,
+                new ArrayList<>(Arrays.asList("sample", "project", "testing"))
         );
         Long projectId = 1L;
         ProjectContentResponseDto responseDto = projectService.updateProject(projectId, projectContentRequestDto);
 
-        assertEquals(responseDto.getProjectname(),"Updated Project");
+        assertEquals("Updated Project",responseDto.getProjectname());
     }
 
     @Test
     void deleteProject() {
-        Long projectId = 1L; // 가정: 삭제하려는 프로젝트의 ID가 1임
-        projectService.deleteProject(projectId);
+        Project project = Project.builder()
+                .projectLinks(List.of("purl"))
+                .projectname("Sample Public Project for User")
+                .description("Public project description")
+                .isPublic(true)
+                .user(SecurityUtil.getCurrentUser())
+                .build();
+        Project toDelete = projectRepository.save(project);
+        projectService.deleteProject(toDelete.getProjectId());
 
-        assertThrows(ProjectNotFoundException.class, () -> projectService.getProject(projectId));
+        assertThrows(ProjectNotFoundException.class, () -> projectService.getProject(toDelete.getProjectId()));
     }
 
     @Test
@@ -163,7 +181,7 @@ class ProjectServiceTest {
     }
 
     public void initProject(){
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 5; i++){
             Project project = Project.builder()
                     .projectLinks(List.of("purl"+i, "purl"+i+1, "purl"+i+2))
                     .projectname("Sample Public Project for User " + (i % users.size() + 1))
@@ -173,7 +191,7 @@ class ProjectServiceTest {
                     .build();
             projects.add(projectRepository.save(project));
         }
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 5; i++){
             Project project = Project.builder()
                     .projectLinks(List.of("purl"+i, "purl"+i+1, "purl"+i+2))
                     .projectname("Sample Private Project for User " + (i % users.size() + 1))
@@ -186,7 +204,7 @@ class ProjectServiceTest {
     }
 
     public void initLibrary() {
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 2; i++) {
             Library library = Library.builder()
                     .project(projects.get(i % projects.size()))
                     .libraryname("lib" + i % 6)
