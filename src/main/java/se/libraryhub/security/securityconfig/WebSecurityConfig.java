@@ -42,10 +42,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers(AUTH_WHITELIST);
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring().antMatchers(AUTH_WHITELIST);
+//    }
 
     private final String[] SWAGGER = {
             "/v3/api-docs",
@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             // all
 //            "/**",
             "/api/libraryCount/**",
+            "/api/file/uploads",
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",

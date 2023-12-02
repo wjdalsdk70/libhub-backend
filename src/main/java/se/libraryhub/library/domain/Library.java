@@ -30,6 +30,7 @@ public class Library extends BaseTimeEntity {
 
     private String version;
 
+    @Column(length = 50000)
     private String description;
 
     @Builder

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-@PropertySource("classpath:/application-aws.properties")
 public class LibraryhubApplication {
 
 	public static void main(String[] args) {
