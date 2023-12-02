@@ -28,6 +28,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
                 .queryParam("accessToken", token.getAccessToken())
                 .build().toUriString();
 
+        System.out.println("구글 로그인 성공");
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 

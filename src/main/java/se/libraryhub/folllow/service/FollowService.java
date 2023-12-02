@@ -44,7 +44,7 @@ public class FollowService {
         for (Follow follow : followerList) {
             User follower = follow.getFollowerUser();
             UserContentResponseDto responseDto = UserContentResponseDto.of
-                    (UserResponseDto.of(follower), isFollowed(follow.getId(), userId));
+                    (UserResponseDto.of(follower), isFollowed(follower.getId(), userId));
             responseList.add(responseDto);
         }
         return responseList;
