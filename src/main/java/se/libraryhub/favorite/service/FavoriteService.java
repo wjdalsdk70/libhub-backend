@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.domain.Favorite;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.favorite.repository.FavoriteRepository;
+import se.libraryhub.folllow.service.FollowService;
 import se.libraryhub.hashtag.domain.Hashtag;
 import se.libraryhub.hashtag.repository.HashtagRepository;
 import se.libraryhub.project.domain.PagingMode;
@@ -31,6 +32,7 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final HashtagRepository hashtagRepository;
+    private final FollowService followService;
 
     public FavoriteResponseDto projectFavoriteInfo(Project project) {
         int favoriteCount = favoriteRepository.findAllByProject(project).size();
@@ -46,12 +48,15 @@ public class FavoriteService {
 
         List<ProjectResponseDto> favoriteProjects = favoriteList.stream().map(favorite -> {
             Project favoriteProject = favorite.getProject();
+            User favoriteProjectOwner = favoriteProject.getUser();
             if(!favoriteProject.getIsPublic()){
                 return null;
             }
             List<Hashtag> hashtags = hashtagRepository.findAllByProject(favoriteProject);
             List<String> hashtagContents = hashtags.stream().map(Hashtag::getContent).toList();
-            return ProjectResponseDto.of(favoriteProject, hashtagContents, favoriteProject.getUser(),projectFavoriteInfo(favoriteProject));
+            return ProjectResponseDto.of(favoriteProject, hashtagContents, favoriteProjectOwner,
+                    followService.isFollowed(favoriteProjectOwner.getId(), getCurrentUser().getId()),
+                    projectFavoriteInfo(favoriteProject));
         }).filter(Objects::nonNull)
           .toList();
 

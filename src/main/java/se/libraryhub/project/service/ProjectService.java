@@ -1,6 +1,7 @@
 package se.libraryhub.project.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
@@ -28,9 +29,12 @@ import se.libraryhub.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static se.libraryhub.security.oauth.SecurityUtil.getCurrentUser;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ProjectService{
 
     private static final int PAGE = 10;
@@ -53,7 +57,8 @@ public class ProjectService{
         List<String> projectHashtags = hashtagRepository.findAllByProject(postedProject).stream()
                 .map(Hashtag::getContent).toList();
         FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(postedProject);
-        return ProjectResponseDto.of(postedProject, projectHashtags, user, favoriteResponseDto);
+        return ProjectResponseDto.of(postedProject, projectHashtags, user,
+                followService.isFollowed(user.getId(), getCurrentUser().getId()), favoriteResponseDto);
     }
 
     public ProjectResult getProjectList(){
@@ -82,7 +87,8 @@ public class ProjectService{
         List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream().map(Hashtag::getContent).toList();
         List<LibraryContentResponseDto> libraryContentResponseDtos = libraryService.getProjectLibraries(project);
         FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
-        return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos, favoriteResponseDto);
+        return ProjectContentResponseDto.of(project, projectHashtags, libraryContentResponseDtos, favoriteResponseDto,
+                followService.isFollowed(project.getUser().getId(), getCurrentUser().getId()));
     }
 
     public ProjectContentResponseDto updateProject(Long projectId, ProjectContentRequestDto projectContentRequestDto){
@@ -103,7 +109,8 @@ public class ProjectService{
 
         FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(updatedProject);
 
-        return ProjectContentResponseDto.of(updatedProject, projectHashtags, libraryContentResponseDtos, favoriteResponseDto);
+        return ProjectContentResponseDto.of(updatedProject, projectHashtags, libraryContentResponseDtos,
+                favoriteResponseDto, followService.isFollowed(updatedProject.getUser().getId(), getCurrentUser().getId()));
     }
 
     public void deleteProject(Long projectId){
@@ -156,8 +163,9 @@ public class ProjectService{
             List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
                     .map(Hashtag::getContent).toList();
             FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
-            return ProjectResponseDto.of(project, projectHashtags, userRepository.findUserById(anotherUserId)
-                    .orElseThrow(UserNotFoundException::new), favoriteResponseDto);
+            User anotherUser = userRepository.findUserById(anotherUserId).orElseThrow(UserNotFoundException::new);
+            return ProjectResponseDto.of(project, projectHashtags, anotherUser,
+                    followService.isFollowed(anotherUser.getId(), getCurrentUser().getId()), favoriteResponseDto);
         }).toList();
     }
 
@@ -203,8 +211,8 @@ public class ProjectService{
             List<String> projectHashtags = hashtagRepository.findAllByProject(project).stream()
                     .map(Hashtag::getContent).toList();
             FavoriteResponseDto favoriteResponseDto = favoriteService.projectFavoriteInfo(project);
-            return ProjectResponseDto.of(project, projectHashtags, project.getUser(), favoriteResponseDto);
+            return ProjectResponseDto.of(project, projectHashtags, project.getUser(),
+                    followService.isFollowed(project.getUser().getId(), getCurrentUser().getId()), favoriteResponseDto);
         })).toList();
     }
-
 }

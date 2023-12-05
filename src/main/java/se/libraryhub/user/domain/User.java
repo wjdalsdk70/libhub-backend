@@ -23,8 +23,10 @@ public class User extends BaseTimeEntity {
 
     private String email;
 
+    @Column(length = 1000)
     private String profileImageUrl;
 
+    @Column(length = 1000)
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> userLinks;
 

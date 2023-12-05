@@ -44,7 +44,7 @@ public class FollowService {
         for (Follow follow : followerList) {
             User follower = follow.getFollowerUser();
             UserContentResponseDto responseDto = UserContentResponseDto.of
-                    (UserResponseDto.of(follower), isFollowed(follow.getId(), userId));
+                    (UserResponseDto.of(follower), isFollowed(follower.getId(), userId));
             responseList.add(responseDto);
         }
         return responseList;
@@ -62,6 +62,7 @@ public class FollowService {
         return responseList;
     }
 
+    // followUserId -> 팔로우 눌리는 사람 , followerUserId -> 팔로우 누르는 사람
     public boolean isFollowed(Long followUserId, Long followerUserId){
         Follow follow = followRepository.findByFollowUserIdAndFollowerUserId(followUserId, followerUserId)
                 .orElse(null);

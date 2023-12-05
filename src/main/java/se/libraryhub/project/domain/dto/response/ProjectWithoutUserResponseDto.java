@@ -7,26 +7,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.project.domain.Project;
-import se.libraryhub.project.repository.ProjectRepository;
 import se.libraryhub.user.domain.User;
 import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
 import se.libraryhub.user.domain.dto.response.UserResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@Schema(description = "프로젝트 미리보기")
+@Schema(description = "사용자가 없는 프로젝트 미리보기")
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class
-ProjectResponseDto{
+public class ProjectWithoutUserResponseDto{
 
     private Long projectId;
-
-    private UserContentResponseDto userContentResponseDto;
 
     private String projectname;
 
@@ -41,11 +36,10 @@ ProjectResponseDto{
     private LocalDateTime createdDate;
 
     @Builder
-    public ProjectResponseDto(Long projectId, UserContentResponseDto userContentResponseDto, String projectname,
+    public ProjectWithoutUserResponseDto(Long projectId, String projectname,
                               List<String> projectHashtags, Boolean isPublic, String description,
                               FavoriteResponseDto favoriteResponseDto, LocalDateTime createdDate) {
         this.projectId = projectId;
-        this.userContentResponseDto = userContentResponseDto;
         this.description = description;
         this.projectname = projectname;
         this.projectHashtags = projectHashtags;
@@ -54,11 +48,10 @@ ProjectResponseDto{
         this.favoriteResponseDto = favoriteResponseDto;
     }
 
-    public static ProjectResponseDto of(Project project, List<String> projectHashtags, User user, boolean isFollowed,
+    public static ProjectResponseDto of(Project project, List<String> projectHashtags, boolean isFollowed,
                                         FavoriteResponseDto favoriteResponseDto){
         return ProjectResponseDto.builder()
                 .projectId(project.getProjectId())
-                .userContentResponseDto(UserContentResponseDto.of(UserResponseDto.of(user), isFollowed))
                 .description(project.getDescription())
                 .projectname(project.getProjectname())
                 .projectHashtags(projectHashtags)

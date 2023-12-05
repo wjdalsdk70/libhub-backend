@@ -5,6 +5,7 @@ import lombok.*;
 import se.libraryhub.favorite.domain.dto.FavoriteResponseDto;
 import se.libraryhub.library.domain.dto.response.LibraryContentResponseDto;
 import se.libraryhub.project.domain.Project;
+import se.libraryhub.user.domain.dto.response.UserContentResponseDto;
 import se.libraryhub.user.domain.dto.response.UserResponseDto;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class ProjectContentResponseDto {
 
     private List<LibraryContentResponseDto> projectLibraries;
 
-    private UserResponseDto userResponseDto;
+    private UserContentResponseDto userContentResponseDto;
 
     private FavoriteResponseDto favoriteResponseDto;
 
@@ -41,14 +42,14 @@ public class ProjectContentResponseDto {
     public ProjectContentResponseDto(Long projectId, String projectname, List<String> projectLinks, 
                                      String description, Boolean isPublic, List<String> projectHashtags, 
                                      List<LibraryContentResponseDto> projectLibraries,
-                                     UserResponseDto userResponseDto, FavoriteResponseDto favoriteResponseDto,
+                                     UserContentResponseDto userContentResponseDto, FavoriteResponseDto favoriteResponseDto,
                                      LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.projectId = projectId;
         this.projectname = projectname;
         this.projectLinks = projectLinks;
         this.description = description;
         this.isPublic = isPublic;
-        this.userResponseDto = userResponseDto;
+        this.userContentResponseDto = userContentResponseDto;
         this.projectHashtags = projectHashtags;
         this.projectLibraries = projectLibraries;
         this.favoriteResponseDto = favoriteResponseDto;
@@ -58,7 +59,7 @@ public class ProjectContentResponseDto {
 
     public static ProjectContentResponseDto of(Project project, List<String> hashtags,
                                                List<LibraryContentResponseDto> libraryContentResponseDtos,
-                                               FavoriteResponseDto favoriteResponseDto){
+                                               FavoriteResponseDto favoriteResponseDto, boolean isFollowed){
         return ProjectContentResponseDto.builder()
                 .projectId(project.getProjectId())
                 .projectname(project.getProjectname())
@@ -68,7 +69,7 @@ public class ProjectContentResponseDto {
                 .projectHashtags(hashtags)
                 .isPublic(project.getIsPublic())
                 .description(project.getDescription())
-                .userResponseDto(UserResponseDto.of(project.getUser()))
+                .userContentResponseDto(UserContentResponseDto.of(UserResponseDto.of(project.getUser()), isFollowed))
                 .favoriteResponseDto(favoriteResponseDto)
                 .projectLibraries(libraryContentResponseDtos)
                 .build();

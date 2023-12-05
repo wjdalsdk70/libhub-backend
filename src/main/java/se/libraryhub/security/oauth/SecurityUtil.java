@@ -13,7 +13,6 @@ public class SecurityUtil {
 
     public static User getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if(authentication == null || authentication.getPrincipal() == null || !(authentication.getPrincipal() instanceof PrincipalDetails principalDetails)){
             throw new UnauthorizedAccessException();
         }

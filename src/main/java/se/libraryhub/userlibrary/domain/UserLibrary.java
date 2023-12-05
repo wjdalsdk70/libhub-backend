@@ -1,4 +1,4 @@
-package se.libraryhub.library.domain;
+package se.libraryhub.userlibrary.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,39 +9,39 @@ import org.hibernate.annotations.OnDeleteAction;
 import se.libraryhub.global.util.BaseTimeEntity;
 import se.libraryhub.library.domain.dto.request.LibraryContentRequestDto;
 import se.libraryhub.project.domain.Project;
+import se.libraryhub.user.domain.User;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Library extends BaseTimeEntity {
+public class UserLibrary extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long libraryId;
+    private Long userLibraryId;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Project project;
+    private User user;
 
     @Column(nullable = false)
     private String libraryname;
 
     private String version;
 
-    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Builder
-    public Library(Project project, String libraryname, String version, String description) {
-        this.project = project;
+    public UserLibrary(User user, String libraryname, String version, String description) {
+        this.user = user;
         this.libraryname = libraryname;
         this.version = version;
         this.description = description;
     }
 
-    public void updateLibrary(LibraryContentRequestDto libraryContentRequestDto){
+    public void updateUserLibrary(LibraryContentRequestDto libraryContentRequestDto){
         this.description = libraryContentRequestDto.getDescription();
         this.libraryname = libraryContentRequestDto.getLibraryname();
         this.version = libraryContentRequestDto.getVersion();
